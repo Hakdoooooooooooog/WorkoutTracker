@@ -31,9 +31,9 @@ public class UsersServiceImpl implements UsersService {
 
         if (userDTOs.isEmpty()) {
             log.warn("No users found");
-
             return List.of();
         }
+        
         return userDTOs;
     }
 
