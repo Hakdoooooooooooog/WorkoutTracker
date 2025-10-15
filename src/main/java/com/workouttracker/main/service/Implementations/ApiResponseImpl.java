@@ -35,7 +35,6 @@ public class ApiResponseImpl implements ApiResponse {
     public ResponseEntity<ApiResponseDto> success(String message, Object data) {
         this.status = "Success";
         this.message = message;
-        this.error = null;
         this.data = data;
         return ResponseEntity.ok(build());
     }
