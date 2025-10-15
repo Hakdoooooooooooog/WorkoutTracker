@@ -9,6 +9,4 @@ public interface ApiResponse {
 
     ResponseEntity<ApiResponseDto> success(String message, Object data);
 
-    ApiResponseDto build();
-
 }
