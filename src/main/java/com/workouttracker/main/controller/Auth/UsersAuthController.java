@@ -29,12 +29,12 @@ public class UsersAuthController {
             boolean isCorrect = usersService.loginUser(user.getEmail(), user.getPassword());
 
             if (isCorrect) {
-                return apiResponse.success("User logged in successfully", user);
+                return apiResponse.success("User logged in successfully", usersService.getUserByEmail(user.getEmail()));
             } else {
-                return apiResponse.error("Invalid credentials", null);
+                return apiResponse.error("Invalid credentials", "Invalid email or password", null);
             }
         } catch (Exception e) {
-            return apiResponse.error("An error occurred: " + e.getMessage(), null);
+            return apiResponse.error("An error occurred:", e.getMessage(), null);
         }
     }
 
@@ -44,7 +44,7 @@ public class UsersAuthController {
             usersService.createUser(user);
             return apiResponse.success("User created successfully", null);
         } catch (IllegalArgumentException e) {
-            return apiResponse.error("Invalid user data: " + e.getMessage(), null);
+            return apiResponse.error("Invalid user data:", e.getMessage(), null);
         }
     }
 
@@ -55,7 +55,7 @@ public class UsersAuthController {
             usersService.logoutUser(user.getEmail());
             return apiResponse.success("User logged out successfully", null);
         } catch (Exception e) {
-            return apiResponse.error("An error occurred: " + e.getMessage(), null);
+            return apiResponse.error("An error occurred:", e.getMessage(), null);
         }
     }
 

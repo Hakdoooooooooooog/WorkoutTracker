@@ -102,4 +102,10 @@ public class UsersServiceImpl implements UsersService {
         throw new UnsupportedOperationException("Unimplemented method 'logoutUser'");
     }
 
+    public Object getUserByEmail(String email) {
+        return usersRepository.findByEmail(email)
+                .map(usersMapper::toDto)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
 }
