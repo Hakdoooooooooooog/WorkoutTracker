@@ -26,4 +26,12 @@ public class ApiResponseDto {
         this.message = message;
         this.data = data;
     }
+
+    // Constructor for error responses with error details
+    public ApiResponseDto(String status, String message, String error, Object data) {
+        this.status = status;
+        this.message = message;
+        this.error = error;
+        this.data = data;
+    }
 }

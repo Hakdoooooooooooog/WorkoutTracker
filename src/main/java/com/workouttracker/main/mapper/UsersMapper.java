@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-import com.workouttracker.main.dtos.UsersDto;
+import com.workouttracker.main.dtos.Users.UsersDto;
 import com.workouttracker.main.entities.UsersEntity;
 
 @Mapper(componentModel = "spring")

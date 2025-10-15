@@ -1,4 +1,4 @@
-package com.workouttracker.main.dtos;
+package com.workouttracker.main.dtos.Users;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

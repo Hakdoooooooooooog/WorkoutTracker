@@ -4,10 +4,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.workouttracker.main.dtos.ApiResponseDto;
+import com.workouttracker.main.dtos.Users.LoginRequest;
 import com.workouttracker.main.entities.UsersEntity;
 import com.workouttracker.main.service.Implementations.ApiResponseImpl;
 import com.workouttracker.main.service.Implementations.UsersServiceImpl;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
@@ -22,14 +24,15 @@ public class UsersAuthController {
     public final ApiResponseImpl apiResponse;
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponseDto> Login(@RequestBody UsersEntity user) {
+    public ResponseEntity<ApiResponseDto> Login(@Valid @RequestBody LoginRequest loginRequest) {
         // Implement login logic
 
         try {
-            boolean isCorrect = usersService.loginUser(user.getEmail(), user.getPassword());
+            boolean isCorrect = usersService.loginUser(loginRequest.getEmail(), loginRequest.getPassword());
 
             if (isCorrect) {
-                return apiResponse.success("User logged in successfully", usersService.getUserByEmail(user.getEmail()));
+                return apiResponse.success("User logged in successfully",
+                        usersService.getUserByEmail(loginRequest.getEmail()));
             } else {
                 return apiResponse.error("Invalid credentials", "Invalid email or password", null);
             }
@@ -39,11 +42,11 @@ public class UsersAuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponseDto> Register(@RequestBody UsersEntity user) {
+    public ResponseEntity<ApiResponseDto> Register(@Valid @RequestBody UsersEntity user) {
         try {
             usersService.createUser(user);
             return apiResponse.success("User created successfully", null);
-        } catch (IllegalArgumentException e) {
+        } catch (RuntimeException e) {
             return apiResponse.error("Invalid user data:", e.getMessage(), null);
         }
     }
