@@ -5,7 +5,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import com.workouttracker.main.dtos.Users.UsersDto;
-import com.workouttracker.main.entities.UsersEntity;
+import com.workouttracker.main.entities.User.UsersEntity;
 
 @Mapper(componentModel = "spring")
 public interface UsersMapper {

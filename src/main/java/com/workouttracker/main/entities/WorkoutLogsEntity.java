@@ -5,6 +5,8 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.UUID;
 
+import com.workouttracker.main.entities.User.UsersEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

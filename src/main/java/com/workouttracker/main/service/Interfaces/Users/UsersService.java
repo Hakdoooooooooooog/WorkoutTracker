@@ -1,10 +1,10 @@
-package com.workouttracker.main.service.Interfaces;
+package com.workouttracker.main.service.Interfaces.Users;
 
 import java.util.List;
 import java.util.UUID;
 
 import com.workouttracker.main.dtos.Users.UsersDto;
-import com.workouttracker.main.entities.UsersEntity;
+import com.workouttracker.main.entities.User.UsersEntity;
 
 public interface UsersService {
     List<UsersDto> getAllUsers();

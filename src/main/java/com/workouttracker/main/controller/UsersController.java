@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.workouttracker.main.dtos.ApiResponseDto;
 import com.workouttracker.main.dtos.Users.UsersDto;
 import com.workouttracker.main.service.Implementations.ApiResponseImpl;
-import com.workouttracker.main.service.Interfaces.UsersService;
+import com.workouttracker.main.service.Interfaces.Users.UsersService;
 
 import lombok.AllArgsConstructor;
 

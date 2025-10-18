@@ -1,4 +1,4 @@
-package com.workouttracker.main.service.Implementations;
+package com.workouttracker.main.service.Implementations.Users;
 
 import java.util.List;
 import java.util.UUID;
@@ -7,10 +7,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.workouttracker.main.dtos.Users.UsersDto;
-import com.workouttracker.main.entities.UsersEntity;
+import com.workouttracker.main.entities.User.UsersEntity;
 import com.workouttracker.main.mapper.UsersMapper;
 import com.workouttracker.main.repositories.UsersRepository;
-import com.workouttracker.main.service.Interfaces.UsersService;
+import com.workouttracker.main.service.Interfaces.Users.UsersService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
