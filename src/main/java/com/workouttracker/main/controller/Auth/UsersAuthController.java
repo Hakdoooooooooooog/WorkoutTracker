@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.workouttracker.main.dtos.ApiResponseDto;
 import com.workouttracker.main.dtos.Users.LoginRequest;
+import com.workouttracker.main.dtos.Users.UsersDto;
 import com.workouttracker.main.entities.User.UsersEntity;
 import com.workouttracker.main.service.Implementations.ApiResponseImpl;
 import com.workouttracker.main.service.Implementations.Users.UsersServiceImpl;
@@ -12,7 +13,11 @@ import com.workouttracker.main.service.Implementations.Users.UsersServiceImpl;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -28,16 +33,20 @@ public class UsersAuthController {
         // Implement login logic
 
         try {
-            boolean isCorrect = usersService.loginUser(loginRequest.getEmail(), loginRequest.getPassword());
+            String token = usersService.loginUser(loginRequest.getUsername(), loginRequest.getPassword());
+            if (token != null) {
+                Map<String, Object> userInfo = Map.of(
+                        "token", token,
+                        "user", usersService.getUserByUsername(loginRequest.getUsername()));
 
-            if (isCorrect) {
-                return apiResponse.success("User logged in successfully",
-                        usersService.getUserByEmail(loginRequest.getEmail()));
+                return apiResponse.success("User logged in successfully", userInfo);
             } else {
-                return apiResponse.error("Invalid credentials", "Invalid email or password", null);
+                return apiResponse.error("Invalid credentials", "Invalid username or password", null);
             }
+        } catch (BadCredentialsException e) {
+            return apiResponse.error("An error occurred", e.getMessage(), null);
         } catch (Exception e) {
-            return apiResponse.error("An error occurred:", e.getMessage(), null);
+            return apiResponse.error("An error occurred", e.getMessage(), null);
         }
     }
 
@@ -47,7 +56,7 @@ public class UsersAuthController {
             usersService.createUser(user);
             return apiResponse.success("User created successfully", null);
         } catch (RuntimeException e) {
-            return apiResponse.error("Invalid user data:", e.getMessage(), null);
+            return apiResponse.error("Invalid user data", e.getMessage(), null);
         }
     }
 

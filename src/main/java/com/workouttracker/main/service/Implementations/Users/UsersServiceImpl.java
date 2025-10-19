@@ -3,6 +3,10 @@ package com.workouttracker.main.service.Implementations.Users;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +16,7 @@ import com.workouttracker.main.exception.DuplicateUserException;
 import com.workouttracker.main.exception.UserNotFoundException;
 import com.workouttracker.main.mapper.UsersMapper;
 import com.workouttracker.main.repositories.UsersRepository;
+import com.workouttracker.main.service.Implementations.JWTServiceImpl;
 import com.workouttracker.main.service.Interfaces.Users.UsersService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,7 +28,13 @@ import lombok.extern.slf4j.Slf4j;
 public class UsersServiceImpl implements UsersService {
     private final UsersRepository usersRepository;
     private final UsersMapper usersMapper;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final JWTServiceImpl jwtService;
+
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public List<UsersDto> getAllUsers() {
@@ -41,7 +52,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public UsersDto getUserById(UUID userId) {
+    public UsersDto getUserById(UUID userId) throws UserNotFoundException {
         return usersRepository.findById(userId)
                 .map(usersMapper::toDto)
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
@@ -49,7 +60,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public UsersEntity createUser(UsersEntity user) {
+    public UsersEntity createUser(UsersEntity user) throws DuplicateUserException {
         if (usersRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new DuplicateUserException("User with email " + user.getEmail() + " already exists");
         }
@@ -66,7 +77,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public UsersEntity updateUser(UUID userId, UsersEntity user) {
+    public UsersEntity updateUser(UUID userId, UsersEntity user) throws UserNotFoundException {
         return usersRepository.findById(userId)
                 .map(existingUser -> {
                     usersMapper.updateEntityFromDto(user, existingUser);
@@ -79,7 +90,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public void deleteUser(UUID userId) {
+    public void deleteUser(UUID userId) throws UserNotFoundException {
         UsersEntity user = usersRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
 
@@ -87,25 +98,20 @@ public class UsersServiceImpl implements UsersService {
         log.info("User deleted successfully: {}", user.getUsername());
     }
 
-    public boolean loginUser(String email, String password) {
-        UsersEntity foundUser = usersRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
+    public String loginUser(String username, String password) throws UserNotFoundException {
+        Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
-        if (checkPassword(password, foundUser.getPassword())) {
-            log.info("User logged in successfully: {}", foundUser.getUsername());
-            return true;
+        if (authentication.isAuthenticated()) {
+            log.info("User logged in successfully: {}", username);
+            return jwtService.generateToken(username);
         }
 
-        log.warn("Invalid password attempt for user: {}", foundUser.getUsername());
-        return false;
+        return null;
     }
 
     private String hashPassword(String password) {
         return passwordEncoder.encode(password);
-    }
-
-    private boolean checkPassword(String plainPassword, String hashedPassword) {
-        return passwordEncoder.matches(plainPassword, hashedPassword);
     }
 
     public void logoutUser(String email) {
@@ -114,10 +120,16 @@ public class UsersServiceImpl implements UsersService {
         // You could implement token blacklisting here if using JWT
     }
 
-    public Object getUserByEmail(String email) {
+    public UsersDto getUserByEmail(String email) {
         return usersRepository.findByEmail(email)
                 .map(usersMapper::toDto)
                 .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
+    }
+
+    public UsersDto getUserByUsername(String username) {
+        return usersRepository.findByUsername(username)
+                .map(usersMapper::toDto)
+                .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
     }
 
 }
