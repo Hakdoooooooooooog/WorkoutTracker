@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.workouttracker.main.dtos.ApiResponseDto;
 import com.workouttracker.main.dtos.Users.LoginRequest;
-import com.workouttracker.main.dtos.Users.UsersDto;
 import com.workouttracker.main.entities.User.UsersEntity;
 import com.workouttracker.main.service.Implementations.ApiResponseImpl;
 import com.workouttracker.main.service.Implementations.Users.UsersServiceImpl;
@@ -13,7 +12,6 @@ import com.workouttracker.main.service.Implementations.Users.UsersServiceImpl;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;

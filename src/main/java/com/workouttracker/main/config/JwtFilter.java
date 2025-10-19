@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Component
+
 public class JwtFilter extends OncePerRequestFilter {
 
     private String username;
@@ -31,6 +32,7 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     ApplicationContext applicationContext;
 
+    @SuppressWarnings("null")
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {

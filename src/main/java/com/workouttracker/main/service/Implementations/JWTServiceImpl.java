@@ -1,6 +1,5 @@
 package com.workouttracker.main.service.Implementations;
 
-import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Date;
@@ -63,7 +62,11 @@ public class JWTServiceImpl {
     }
 
     private Claims extractAllClaims(String jwtToken) {
-        return Jwts.parser().verifyWith(getKey()).build().parseSignedClaims(jwtToken).getPayload();
+        return Jwts.parser()
+                .verifyWith(getKey())
+                .build()
+                .parseSignedClaims(jwtToken)
+                .getPayload();
     }
 
     public boolean validateToken(String jwtToken, UserDetails userDetails) {
