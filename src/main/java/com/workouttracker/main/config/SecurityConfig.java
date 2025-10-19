@@ -18,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 // import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.workouttracker.main.service.Interfaces.Users.UsersDetailsService;
 
@@ -26,7 +27,10 @@ import com.workouttracker.main.service.Interfaces.Users.UsersDetailsService;
 public class SecurityConfig {
 
         @Autowired
-        UsersDetailsService userDetailsService;
+        private UsersDetailsService userDetailsService;
+
+        @Autowired
+        private JwtFilter jwtFilter;
 
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -44,6 +48,8 @@ public class SecurityConfig {
 
                 // Stateless session management for every request
                 http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+                http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
                 return http.build();
         }
