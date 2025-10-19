@@ -13,12 +13,14 @@ import javax.crypto.SecretKey;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.workouttracker.main.service.Interfaces.JwtService;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
 @Service
-public class JWTServiceImpl {
+public class JWTServiceImpl implements JwtService {
 
     private String secretKey = "";
 
@@ -48,12 +50,17 @@ public class JWTServiceImpl {
                 .compact();
     }
 
-    private SecretKey getKey() {
-        return Keys.hmacShaKeyFor(secretKey.getBytes());
-    }
-
     public String extractUsername(String jwtToken) {
         return extractClaim(jwtToken, Claims::getSubject);
+    }
+
+    public boolean validateToken(String jwtToken, UserDetails userDetails) {
+        final String username = extractUsername(jwtToken);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(jwtToken));
+    }
+
+    private SecretKey getKey() {
+        return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
     private <T> T extractClaim(String jwtToken, Function<Claims, T> claimsResolver) {
@@ -67,11 +74,6 @@ public class JWTServiceImpl {
                 .build()
                 .parseSignedClaims(jwtToken)
                 .getPayload();
-    }
-
-    public boolean validateToken(String jwtToken, UserDetails userDetails) {
-        final String username = extractUsername(jwtToken);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(jwtToken));
     }
 
     private boolean isTokenExpired(String jwtToken) {
