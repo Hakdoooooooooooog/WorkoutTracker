@@ -10,6 +10,7 @@ import com.workouttracker.main.service.Interfaces.Users.UsersService;
 
 import lombok.AllArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
@@ -24,14 +25,20 @@ public class UsersController {
     public final UsersService usersService;
     public final ApiResponseImpl apiResponse;
 
+    @GetMapping
+    public ResponseEntity<ApiResponseDto> getAllUsers() {
+        List<UsersDto> users = usersService.getAllUsers();
+        return apiResponse.success("Users retrieved successfully", users);
+    }
+
     @GetMapping("{id}")
-    public ResponseEntity<UsersDto> getUserById(@PathVariable String id) {
+    public ResponseEntity<ApiResponseDto> getUserById(@PathVariable String id) {
         try {
             UUID userId = UUID.fromString(id);
-
-            return ResponseEntity.ok(usersService.getUserById(userId));
+            UsersDto user = usersService.getUserById(userId);
+            return apiResponse.success("User retrieved successfully", user);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
+            return apiResponse.error("User not found", e.getMessage(), id);
         }
     }
 

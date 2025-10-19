@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import com.workouttracker.main.dtos.Users.UsersDto;
 import com.workouttracker.main.entities.User.UsersEntity;
+import com.workouttracker.main.exception.DuplicateUserException;
+import com.workouttracker.main.exception.UserNotFoundException;
 import com.workouttracker.main.mapper.UsersMapper;
 import com.workouttracker.main.repositories.UsersRepository;
 import com.workouttracker.main.service.Interfaces.Users.UsersService;
@@ -42,19 +44,24 @@ public class UsersServiceImpl implements UsersService {
     public UsersDto getUserById(UUID userId) {
         return usersRepository.findById(userId)
                 .map(usersMapper::toDto)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
 
     }
 
     @Override
     public UsersEntity createUser(UsersEntity user) {
         if (usersRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new RuntimeException("User with email " + user.getEmail() + " already exists");
+            throw new DuplicateUserException("User with email " + user.getEmail() + " already exists");
+        }
+
+        if (usersRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new DuplicateUserException("User with username " + user.getUsername() + " already exists");
         }
 
         String hashedPassword = hashPassword(user.getPassword());
         user.setPassword(hashedPassword);
 
+        log.info("Creating new user: {}", user.getUsername());
         return usersRepository.save(user);
     }
 
@@ -64,32 +71,32 @@ public class UsersServiceImpl implements UsersService {
                 .map(existingUser -> {
                     usersMapper.updateEntityFromDto(user, existingUser);
                     // updatedAt will be auto-updated by @PreUpdate
-                    log.info("User updated successfully");
+                    log.info("User updated successfully: {}", existingUser.getUsername());
 
                     return usersRepository.save(existingUser);
                 })
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
     }
 
     @Override
     public void deleteUser(UUID userId) {
         UsersEntity user = usersRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
 
         usersRepository.delete(user);
-        log.info("User deleted successfully");
+        log.info("User deleted successfully: {}", user.getUsername());
     }
 
     public boolean loginUser(String email, String password) {
         UsersEntity foundUser = usersRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
 
         if (checkPassword(password, foundUser.getPassword())) {
-            log.info("User logged in successfully");
+            log.info("User logged in successfully: {}", foundUser.getUsername());
             return true;
         }
 
-        log.warn("Invalid password");
+        log.warn("Invalid password attempt for user: {}", foundUser.getUsername());
         return false;
     }
 
@@ -102,14 +109,15 @@ public class UsersServiceImpl implements UsersService {
     }
 
     public void logoutUser(String email) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'logoutUser'");
+        // For stateless JWT/Basic Auth, logout is typically handled client-side
+        log.info("Logout requested for user with email: {}", email);
+        // You could implement token blacklisting here if using JWT
     }
 
     public Object getUserByEmail(String email) {
         return usersRepository.findByEmail(email)
                 .map(usersMapper::toDto)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
     }
 
 }

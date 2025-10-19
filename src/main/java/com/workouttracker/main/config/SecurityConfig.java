@@ -9,7 +9,12 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+// import org.springframework.security.core.userdetails.User;
+// import org.springframework.security.core.userdetails.UserDetails;
+// import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+// import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.workouttracker.main.service.Interfaces.Users.UsersDetailsService;
@@ -25,10 +30,12 @@ public class SecurityConfig {
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http.csrf(csrf -> csrf.disable());
 
-                http.authorizeHttpRequests(auth -> auth.anyRequest().authenticated());
+                http.authorizeHttpRequests(auth -> auth
+                                .requestMatchers("/api/v1/auth/**").permitAll() // Allow registration/login without auth
+                                .anyRequest().authenticated());
 
                 // Form login default
-                http.formLogin(Customizer.withDefaults());
+                // http.formLogin(Customizer.withDefaults());
 
                 // HTTP Basic authentication for postman etc...
                 http.httpBasic(Customizer.withDefaults());
@@ -42,8 +49,22 @@ public class SecurityConfig {
         @Bean
         public AuthenticationProvider authenticationProvider() {
                 DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-                provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
+                provider.setPasswordEncoder(passwordEncoder());
                 provider.setUserDetailsService(userDetailsService);
                 return provider;
         }
+
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
+
+        // @Bean
+        // public UserDetailsService userDetailsService() {
+
+        // UserDetails user =
+        // User.withDefaultPasswordEncoder().username("test").password("password").roles("USER")
+        // .build();
+        // return new InMemoryUserDetailsManager(user);
+        // }
 }
