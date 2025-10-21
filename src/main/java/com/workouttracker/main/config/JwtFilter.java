@@ -21,8 +21,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Component
+@Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
     private String username;
@@ -38,6 +38,13 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
+        // Skip JWT validation for auth endpoints (login, register)
+        String path = request.getServletPath();
+        if (path.startsWith("/api/v1/auth/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         this.jwtToken = extractJwtToken(request);
 
@@ -63,15 +70,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
                         // Set the authentication in the security context
                         SecurityContextHolder.getContext().setAuthentication(authentication);
-                        log.debug("User '{}' authenticated successfully via JWT", this.username);
-                    } else {
-                        log.warn("JWT token validation failed for user: {}", this.username);
                     }
                 }
             } catch (Exception e) {
-                // Log and continue - invalid tokens simply won't authenticate
-                log.warn("JWT authentication failed: {}", e.getMessage());
-                // User remains unauthenticated, will get 401 from AuthorizationFilter
+                log.error("Error occurred while processing JWT token: {}", e.getMessage());
             }
         }
 

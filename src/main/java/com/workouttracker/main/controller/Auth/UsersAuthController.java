@@ -12,7 +12,6 @@ import com.workouttracker.main.service.Implementations.Users.UsersServiceImpl;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -34,9 +33,10 @@ public class UsersAuthController {
         try {
             String token = usersService.loginUser(loginRequest.getUsername(), loginRequest.getPassword());
             if (token != null) {
-                Map<String, Object> userInfo = new HashMap<>();
-                userInfo.put("token", token);
-                userInfo.put("user", usersService.getUserByUsername(loginRequest.getUsername()));
+                Map<String, Object> userInfo = Map.of(
+                        "token", token,
+                        "user", usersService.getUserByUsername(loginRequest.getUsername()));
+
                 return apiResponse.success("User logged in successfully", userInfo);
             } else {
                 return apiResponse.error("Invalid credentials", "Invalid username or password", null);
