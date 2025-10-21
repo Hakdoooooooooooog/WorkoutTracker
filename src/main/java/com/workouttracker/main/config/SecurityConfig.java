@@ -31,15 +31,25 @@ public class SecurityConfig {
         @Autowired
         private JwtFilter jwtFilter;
 
+        @Autowired
+        private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
+        @Autowired
+        private JwtAccessDeniedHandler jwtAccessDeniedHandler;
+
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http.csrf(csrf -> csrf.disable());
 
                 http.authorizeHttpRequests(auth -> auth
                                 .requestMatchers("/api/v1/auth/**").permitAll() // Allow registration/login without auth
+                                // .requestMatchers("/api/v1/users/**").hasAnyAuthority("USER")
                                 .anyRequest().authenticated())
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .exceptionHandling(exception -> exception
+                                                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                                                .accessDeniedHandler(jwtAccessDeniedHandler))
                                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
                 return http.build();

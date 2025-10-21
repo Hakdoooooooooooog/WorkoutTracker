@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -44,8 +45,9 @@ public class JwtFilter extends OncePerRequestFilter {
         if (this.jwtToken != null) {
             try {
                 this.username = jwtService.extractUsername(this.jwtToken);
+                SecurityContext securityContext = SecurityContextHolder.getContext();
 
-                if (this.username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                if (this.username != null && securityContext.getAuthentication() == null) {
 
                     // Load user details
                     UserDetails userDetails = applicationContext.getBean(UsersDetailsService.class)
