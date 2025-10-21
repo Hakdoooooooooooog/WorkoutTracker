@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.workouttracker.main.service.Implementations.JWTServiceImpl;
-import com.workouttracker.main.service.Interfaces.Users.UsersDetailsService;
+import com.workouttracker.main.service.Implementations.Users.UsersDetailsServiceImpl;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -50,7 +50,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 if (this.username != null && securityContext.getAuthentication() == null) {
 
                     // Load user details
-                    UserDetails userDetails = applicationContext.getBean(UsersDetailsService.class)
+                    UserDetails userDetails = applicationContext.getBean(UsersDetailsServiceImpl.class)
                             .loadUserByUsername(this.username);
 
                     if (jwtService.validateToken(this.jwtToken, userDetails)) {
@@ -58,7 +58,7 @@ public class JwtFilter extends OncePerRequestFilter {
                         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                                 userDetails, null, userDetails.getAuthorities());
 
-                        // Set the details
+                        // Set the details (IP address, user agent, etc.)
                         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                         // Set the authentication in the security context
