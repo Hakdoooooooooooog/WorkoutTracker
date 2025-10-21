@@ -1,15 +1,16 @@
 package com.workouttracker.main.service.Implementations;
 
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
+// import java.security.NoSuchAlgorithmException;
+// import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import javax.crypto.KeyGenerator;
+// import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -18,23 +19,26 @@ import com.workouttracker.main.service.Interfaces.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class JWTServiceImpl implements JwtService {
 
+    @Value("${jwt.secret}")
     private String secretKey = "";
 
-    public JWTServiceImpl() {
+    // public JWTServiceImpl() {
 
-        try {
-            KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
-            SecretKey secretKey = keyGen.generateKey();
-            this.secretKey = Base64.getEncoder().encodeToString(secretKey.getEncoded());
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Failed to generate secret key", e);
-        }
+    // try {
+    // KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
+    // SecretKey secretKey = keyGen.generateKey();
+    // this.secretKey = Base64.getEncoder().encodeToString(secretKey.getEncoded());
+    // } catch (NoSuchAlgorithmException e) {
+    // throw new RuntimeException("Failed to generate secret key", e);
+    // }
 
-    }
+    // }
 
     public String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
@@ -55,8 +59,21 @@ public class JWTServiceImpl implements JwtService {
     }
 
     public boolean validateToken(String jwtToken, UserDetails userDetails) {
-        final String username = extractUsername(jwtToken);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(jwtToken));
+        try {
+            final String username = extractUsername(jwtToken);
+            boolean isValid = username.equals(userDetails.getUsername()) && !isTokenExpired(jwtToken);
+
+            if (isValid) {
+                log.debug("JWT token validated successfully for user: {}", username);
+            } else {
+                log.warn("JWT token validation failed for user: {}", username);
+            }
+
+            return isValid;
+        } catch (Exception e) {
+            log.warn("JWT token validation failed: {}", e.getMessage());
+            return false;
+        }
     }
 
     private SecretKey getKey() {

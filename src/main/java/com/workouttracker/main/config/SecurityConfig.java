@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -38,18 +37,10 @@ public class SecurityConfig {
 
                 http.authorizeHttpRequests(auth -> auth
                                 .requestMatchers("/api/v1/auth/**").permitAll() // Allow registration/login without auth
-                                .anyRequest().authenticated());
-
-                // Form login default
-                // http.formLogin(Customizer.withDefaults());
-
-                // HTTP Basic authentication for postman etc...
-                http.httpBasic(Customizer.withDefaults());
-
-                // Stateless session management for every request
-                http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-                http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                                .anyRequest().authenticated())
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
                 return http.build();
         }

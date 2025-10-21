@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.workouttracker.main.dtos.ApiResponseDto;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -75,6 +78,39 @@ public class GlobalExceptionHandler {
                 ex.getMessage(),
                 null);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    @ExceptionHandler(SignatureException.class)
+    public ResponseEntity<ApiResponseDto> handleSignatureException(SignatureException ex) {
+        log.error("Invalid JWT signature: {}", ex.getMessage());
+        ApiResponseDto response = new ApiResponseDto(
+                "Error",
+                "Invalid token signature",
+                "The token signature is invalid",
+                null);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ApiResponseDto> handleExpiredJwtException(ExpiredJwtException ex) {
+        log.warn("JWT token expired: {}", ex.getMessage());
+        ApiResponseDto response = new ApiResponseDto(
+                "Error",
+                "Token expired",
+                "Your session has expired. Please login again",
+                null);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    @ExceptionHandler(MalformedJwtException.class)
+    public ResponseEntity<ApiResponseDto> handleMalformedJwtException(MalformedJwtException ex) {
+        log.error("Malformed JWT token: {}", ex.getMessage());
+        ApiResponseDto response = new ApiResponseDto(
+                "Error",
+                "Invalid token format",
+                "The token format is invalid",
+                null);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler(RuntimeException.class)

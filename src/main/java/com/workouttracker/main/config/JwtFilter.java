@@ -18,9 +18,10 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
-
 public class JwtFilter extends OncePerRequestFilter {
 
     private String username;
@@ -37,36 +38,38 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        // Skip JWT validation for auth endpoints (login, register)
-        String path = request.getServletPath();
-        if (path.startsWith("/api/v1/auth/")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         this.jwtToken = extractJwtToken(request);
 
         // Only process if token exists
         if (this.jwtToken != null) {
-            this.username = jwtService.extractUsername(this.jwtToken);
+            try {
+                this.username = jwtService.extractUsername(this.jwtToken);
 
-            if (this.username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                if (this.username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-                // Load user details
-                UserDetails userDetails = applicationContext.getBean(UsersDetailsService.class)
-                        .loadUserByUsername(this.username);
+                    // Load user details
+                    UserDetails userDetails = applicationContext.getBean(UsersDetailsService.class)
+                            .loadUserByUsername(this.username);
 
-                if (jwtService.validateToken(this.jwtToken, userDetails)) {
-                    // Set the user details in the security context
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities());
+                    if (jwtService.validateToken(this.jwtToken, userDetails)) {
+                        // Set the user details in the security context
+                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                                userDetails, null, userDetails.getAuthorities());
 
-                    // Set the details
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        // Set the details
+                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                    // Set the authentication in the security context
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                        // Set the authentication in the security context
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                        log.debug("User '{}' authenticated successfully via JWT", this.username);
+                    } else {
+                        log.warn("JWT token validation failed for user: {}", this.username);
+                    }
                 }
+            } catch (Exception e) {
+                // Log and continue - invalid tokens simply won't authenticate
+                log.warn("JWT authentication failed: {}", e.getMessage());
+                // User remains unauthenticated, will get 401 from AuthorizationFilter
             }
         }
 
