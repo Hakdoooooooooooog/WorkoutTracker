@@ -1,4 +1,4 @@
-package com.workouttracker.main.entities.User;
+package com.workouttracker.main.entities.Users;
 
 import java.sql.Timestamp;
 import java.util.UUID;

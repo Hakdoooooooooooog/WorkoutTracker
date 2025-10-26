@@ -1,4 +1,4 @@
-package com.workouttracker.main.entities.User;
+package com.workouttracker.main.entities.Users;
 
 import java.util.Collection;
 import java.util.Collections;

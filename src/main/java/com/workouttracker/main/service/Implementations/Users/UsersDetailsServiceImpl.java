@@ -5,8 +5,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.workouttracker.main.entities.User.UserPrincipal;
-import com.workouttracker.main.entities.User.UsersEntity;
+import com.workouttracker.main.entities.Users.UserPrincipal;
+import com.workouttracker.main.entities.Users.UsersEntity;
 import com.workouttracker.main.repositories.UsersRepository;
 import com.workouttracker.main.service.Interfaces.Users.UsersDetailsService;
 

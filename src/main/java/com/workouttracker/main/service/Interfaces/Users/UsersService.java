@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.workouttracker.main.dtos.Users.UsersDto;
-import com.workouttracker.main.entities.User.UsersEntity;
+import com.workouttracker.main.entities.Users.UsersEntity;
 
 public interface UsersService {
     List<UsersDto> getAllUsers();
