@@ -1,4 +1,4 @@
-package com.workouttracker.main.repositories;
+package com.workouttracker.main.repositories.Users;
 
 import java.util.Optional;
 import java.util.UUID;

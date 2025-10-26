@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.workouttracker.main.entities.Users.UserPrincipal;
 import com.workouttracker.main.entities.Users.UsersEntity;
-import com.workouttracker.main.repositories.UsersRepository;
+import com.workouttracker.main.repositories.Users.UsersRepository;
 import com.workouttracker.main.service.Interfaces.Users.UsersDetailsService;
 
 import lombok.extern.slf4j.Slf4j;

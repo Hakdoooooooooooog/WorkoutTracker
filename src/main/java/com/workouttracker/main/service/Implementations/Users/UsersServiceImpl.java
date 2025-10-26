@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import com.workouttracker.main.dtos.Users.UsersDto;
 import com.workouttracker.main.entities.Users.UsersEntity;
 import com.workouttracker.main.mapper.UsersMapper;
-import com.workouttracker.main.repositories.UsersRepository;
+import com.workouttracker.main.repositories.Users.UsersRepository;
 import com.workouttracker.main.service.Implementations.JWTServiceImpl;
 import com.workouttracker.main.service.Interfaces.Users.UsersService;
 
