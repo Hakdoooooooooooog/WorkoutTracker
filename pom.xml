@@ -158,11 +158,6 @@
 							<artifactId>mapstruct-processor</artifactId>
 							<version>1.6.3</version>
 						</path>
-
-						<compilerArgs>
-							<arg>-Amapstruct.defaultComponentModel=spring</arg>
-							<arg>-Amapstruct.verbose=true</arg>
-						</compilerArgs>
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
