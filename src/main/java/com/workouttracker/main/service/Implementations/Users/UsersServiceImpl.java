@@ -12,13 +12,13 @@ import org.springframework.stereotype.Service;
 
 import com.workouttracker.main.dtos.Users.UsersDto;
 import com.workouttracker.main.entities.User.UsersEntity;
-import com.workouttracker.main.exception.DuplicateUserException;
-import com.workouttracker.main.exception.UserNotFoundException;
 import com.workouttracker.main.mapper.UsersMapper;
 import com.workouttracker.main.repositories.UsersRepository;
 import com.workouttracker.main.service.Implementations.JWTServiceImpl;
 import com.workouttracker.main.service.Interfaces.Users.UsersService;
 
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -52,21 +52,21 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public UsersDto getUserById(UUID userId) throws UserNotFoundException {
+    public UsersDto getUserById(UUID userId) {
         return usersRepository.findById(userId)
                 .map(usersMapper::toDto)
-                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
 
     }
 
     @Override
-    public UsersEntity createUser(UsersEntity user) throws DuplicateUserException {
+    public UsersEntity createUser(UsersEntity user) {
         if (usersRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new DuplicateUserException("User with email " + user.getEmail() + " already exists");
+            throw new EntityExistsException("User with email: " + user.getEmail() + " already exists");
         }
 
         if (usersRepository.findByUsername(user.getUsername()).isPresent()) {
-            throw new DuplicateUserException("User with username " + user.getUsername() + " already exists");
+            throw new EntityExistsException("User with username: " + user.getUsername() + " already exists");
         }
 
         String hashedPassword = hashPassword(user.getPassword());
@@ -77,7 +77,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public UsersEntity updateUser(UUID userId, UsersEntity user) throws UserNotFoundException {
+    public UsersEntity updateUser(UUID userId, UsersEntity user) {
         return usersRepository.findById(userId)
                 .map(existingUser -> {
                     usersMapper.updateEntityFromDto(user, existingUser);
@@ -86,19 +86,19 @@ public class UsersServiceImpl implements UsersService {
 
                     return usersRepository.save(existingUser);
                 })
-                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
     }
 
     @Override
-    public void deleteUser(UUID userId) throws UserNotFoundException {
+    public void deleteUser(UUID userId) {
         UsersEntity user = usersRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
 
         usersRepository.delete(user);
         log.info("User deleted successfully: {}", user.getUsername());
     }
 
-    public String loginUser(String username, String password) throws UserNotFoundException {
+    public String loginUser(String username, String password) {
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
@@ -115,7 +115,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     public void logoutUser(String email) {
-        // For stateless JWT/Basic Auth, logout is typically handled client-side
+
         log.info("Logout requested for user with email: {}", email);
         // You could implement token blacklisting here if using JWT
     }
@@ -123,13 +123,13 @@ public class UsersServiceImpl implements UsersService {
     public UsersDto getUserByEmail(String email) {
         return usersRepository.findByEmail(email)
                 .map(usersMapper::toDto)
-                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
+                .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
     }
 
     public UsersDto getUserByUsername(String username) {
         return usersRepository.findByUsername(username)
                 .map(usersMapper::toDto)
-                .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
+                .orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
     }
 
 }

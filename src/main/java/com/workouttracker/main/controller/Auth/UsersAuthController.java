@@ -30,43 +30,31 @@ public class UsersAuthController {
     public ResponseEntity<ApiResponseDto> Login(@Valid @RequestBody LoginRequest loginRequest) {
         // Implement login logic
 
-        try {
-            String token = usersService.loginUser(loginRequest.getUsername(), loginRequest.getPassword());
-            if (token != null) {
-                Map<String, Object> userInfo = Map.of(
-                        "token", token,
-                        "user", usersService.getUserByUsername(loginRequest.getUsername()));
+        String token = usersService.loginUser(loginRequest.getUsername(), loginRequest.getPassword());
+        if (token != null) {
+            Map<String, Object> userInfo = Map.of(
+                    "token", token,
+                    "user", usersService.getUserByUsername(loginRequest.getUsername()));
 
-                return apiResponse.success("User logged in successfully", userInfo);
-            } else {
-                return apiResponse.error("Invalid credentials", "Invalid username or password", null);
-            }
-        } catch (BadCredentialsException e) {
-            return apiResponse.error("An error occurred", e.getMessage(), null);
-        } catch (Exception e) {
-            return apiResponse.error("An error occurred", e.getMessage(), null);
+            return apiResponse.success("User logged in successfully", userInfo);
+        } else {
+            return apiResponse.error("Invalid credentials", "Invalid username or password", null);
         }
+
     }
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponseDto> Register(@Valid @RequestBody UsersEntity user) {
-        try {
-            usersService.createUser(user);
-            return apiResponse.success("User created successfully", null);
-        } catch (RuntimeException e) {
-            return apiResponse.error("Invalid user data", e.getMessage(), null);
-        }
+        usersService.createUser(user);
+        return apiResponse.success("User created successfully", null);
     }
 
     @PostMapping("/logout")
     public ResponseEntity<ApiResponseDto> Logout(@RequestBody UsersEntity user) {
         // Implement logout logic
-        try {
-            usersService.logoutUser(user.getEmail());
-            return apiResponse.success("User logged out successfully", null);
-        } catch (Exception e) {
-            return apiResponse.error("An error occurred:", e.getMessage(), null);
-        }
+        usersService.logoutUser(user.getEmail());
+        return apiResponse.success("User logged out successfully", null);
+
     }
 
 }

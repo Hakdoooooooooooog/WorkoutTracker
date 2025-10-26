@@ -12,7 +12,7 @@ public class ApiResponseImpl implements ApiResponse {
 
     @Override
     public ResponseEntity<ApiResponseDto> error(String message, String error, Object data) {
-        ApiResponseDto responseDto = new ApiResponseDto("Error", message);
+        ApiResponseDto responseDto = new ApiResponseDto(HttpStatus.BAD_REQUEST, message);
 
         responseDto.setError(error);
         responseDto.setData(data);
@@ -22,7 +22,7 @@ public class ApiResponseImpl implements ApiResponse {
 
     @Override
     public ResponseEntity<ApiResponseDto> success(String message, Object data) {
-        ApiResponseDto responseDto = new ApiResponseDto("Success", message, data);
+        ApiResponseDto responseDto = new ApiResponseDto(HttpStatus.OK, message, data);
         return ResponseEntity.ok(responseDto);
     }
 }

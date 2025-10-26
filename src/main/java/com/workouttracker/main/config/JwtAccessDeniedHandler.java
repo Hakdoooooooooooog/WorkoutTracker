@@ -2,6 +2,7 @@ package com.workouttracker.main.config;
 
 import java.io.IOException;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
@@ -30,7 +31,7 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
         response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403
 
         ApiResponseDto errorResponse = new ApiResponseDto(
-                "Error",
+                HttpStatus.FORBIDDEN,
                 "Forbidden",
                 "You don't have permission to access this resource",
                 null);

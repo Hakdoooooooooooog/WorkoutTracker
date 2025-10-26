@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.workouttracker.main.dtos.ApiResponseDto;
 
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -36,7 +38,7 @@ public class GlobalExceptionHandler {
         });
 
         ApiResponseDto response = new ApiResponseDto(
-                "Error",
+                HttpStatus.BAD_REQUEST,
                 "Validation failed",
                 null,
                 errors);
@@ -44,22 +46,22 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ApiResponseDto> handleUserNotFoundException(UserNotFoundException ex) {
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ApiResponseDto> handleEntityNotFoundException(EntityNotFoundException ex) {
         log.warn("User not found: {}", ex.getMessage());
         ApiResponseDto response = new ApiResponseDto(
-                "Error",
+                HttpStatus.NOT_FOUND,
                 "User not found",
                 ex.getMessage(),
                 null);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
-    @ExceptionHandler(DuplicateUserException.class)
-    public ResponseEntity<ApiResponseDto> handleDuplicateUserException(DuplicateUserException ex) {
+    @ExceptionHandler(EntityExistsException.class)
+    public ResponseEntity<ApiResponseDto> handleDuplicateUserException(EntityExistsException ex) {
         log.warn("Duplicate user: {}", ex.getMessage());
         ApiResponseDto response = new ApiResponseDto(
-                "Error",
+                HttpStatus.CONFLICT,
                 "User already exists",
                 ex.getMessage(),
                 null);
@@ -70,7 +72,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponseDto> handleAuthenticationException(AuthenticationException ex) {
         log.warn("Authentication failed: {}", ex.getMessage());
         ApiResponseDto response = new ApiResponseDto(
-                "Error",
+                HttpStatus.UNAUTHORIZED,
                 "Authentication failed",
                 ex.getMessage(),
                 null);
@@ -81,18 +83,29 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponseDto> handleRuntimeException(RuntimeException ex) {
         log.error("Unexpected error occurred", ex);
         ApiResponseDto response = new ApiResponseDto(
-                "Error",
+                HttpStatus.INTERNAL_SERVER_ERROR,
                 "An unexpected error occurred",
                 ex.getMessage(),
                 null);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponseDto> handleIllegalArgumentException(IllegalArgumentException ex) {
+        log.warn("Invalid input: {}", ex.getMessage());
+        ApiResponseDto response = new ApiResponseDto(
+                HttpStatus.BAD_REQUEST,
+                "Invalid input",
+                ex.getMessage(),
+                null);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponseDto> handleGenericException(Exception ex) {
         log.error("Critical error occurred", ex);
         ApiResponseDto response = new ApiResponseDto(
-                "Error",
+                HttpStatus.INTERNAL_SERVER_ERROR,
                 "Internal server error",
                 "An unexpected error occurred",
                 null);

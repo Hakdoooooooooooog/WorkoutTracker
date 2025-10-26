@@ -2,6 +2,7 @@ package com.workouttracker.main.config;
 
 import java.io.IOException;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -30,7 +31,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
 
         ApiResponseDto errorResponse = new ApiResponseDto(
-                "Error",
+                HttpStatus.UNAUTHORIZED,
                 "Unauthorized",
                 "Authentication is required to access this resource",
                 null);

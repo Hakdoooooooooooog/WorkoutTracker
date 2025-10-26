@@ -33,26 +33,17 @@ public class UsersController {
 
     @GetMapping("{id}")
     public ResponseEntity<ApiResponseDto> getUserById(@PathVariable String id) {
-        try {
-            UUID userId = UUID.fromString(id);
-            UsersDto user = usersService.getUserById(userId);
-            return apiResponse.success("User retrieved successfully", user);
-        } catch (RuntimeException e) {
-            return apiResponse.error("User not found", e.getMessage(), id);
-        }
+
+        UUID userId = UUID.fromString(id);
+        UsersDto user = usersService.getUserById(userId);
+        return apiResponse.success("User retrieved successfully", user);
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ApiResponseDto> deleteUser(@PathVariable String id) {
-        try {
-            UUID userId = UUID.fromString(id);
-            usersService.deleteUser(userId);
-            return apiResponse.success("User deleted successfully", userId);
-        } catch (IllegalArgumentException e) {
-            return apiResponse.error("Invalid user ID", e.getMessage(), id);
-        } catch (RuntimeException e) {
-            return apiResponse.error("Invalid user ID", e.getMessage(), id);
-        }
+        UUID userId = UUID.fromString(id);
+        usersService.deleteUser(userId);
+        return apiResponse.success("User deleted successfully", userId);
     }
 
 }
