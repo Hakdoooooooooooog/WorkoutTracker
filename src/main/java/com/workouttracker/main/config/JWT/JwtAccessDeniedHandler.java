@@ -1,10 +1,10 @@
-package com.workouttracker.main.config;
+package com.workouttracker.main.config.JWT;
 
 import java.io.IOException;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,23 +17,23 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response,
-            AuthenticationException authException) throws IOException, ServletException {
+    public void handle(HttpServletRequest request, HttpServletResponse response,
+            AccessDeniedException accessDeniedException) throws IOException, ServletException {
 
-        log.warn("Unauthorized access attempt: {}", authException.getMessage());
+        log.warn("Access denied: {}", accessDeniedException.getMessage());
 
         response.setContentType("application/json");
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403
 
         ApiResponseDto errorResponse = new ApiResponseDto(
-                HttpStatus.UNAUTHORIZED,
-                "Unauthorized",
-                "Authentication is required to access this resource",
+                HttpStatus.FORBIDDEN,
+                "Forbidden",
+                "You don't have permission to access this resource",
                 null);
 
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
