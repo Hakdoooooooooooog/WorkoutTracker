@@ -17,6 +17,12 @@ public interface UsersMapper {
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "customExercises", ignore = true)
+    @Mapping(target = "personalRecords", ignore = true)
+    @Mapping(target = "progressRecords", ignore = true)
+    @Mapping(target = "scheduledWorkouts", ignore = true)
+    @Mapping(target = "workoutLogs", ignore = true)
+    @Mapping(target = "workoutPlans", ignore = true)
     UsersEntity toEntity(UsersDto dto);
 
     // Updates existing entity from another entity - ignores immutable fields
