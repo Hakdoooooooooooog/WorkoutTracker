@@ -1,11 +1,13 @@
 package com.workouttracker.main.mapper;
 
+import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import com.workouttracker.main.dtos.Users.UsersDto;
 import com.workouttracker.main.entities.Users.UsersEntity;
 
+@Mapper(componentModel = "spring")
 public interface UsersMapper {
     // Maps entity to DTO - only maps fields that exist in both
     UsersDto toDto(UsersEntity user);
