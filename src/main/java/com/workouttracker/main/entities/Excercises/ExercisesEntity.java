@@ -76,7 +76,7 @@ public class ExercisesEntity {
 
     // If custom exercise, link to the user who created it
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_created_by_user_id")
+    @JoinColumn(name = "created_by_user_id")
     private UsersEntity createdBy;
 
     @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")

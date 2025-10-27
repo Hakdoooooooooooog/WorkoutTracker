@@ -38,11 +38,11 @@ public class PersonalRecordsEntity {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private UsersEntity user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_exercise_id", nullable = false)
+    @JoinColumn(name = "exercise_id", nullable = false)
     private ExercisesEntity exercise;
 
     @Enumerated(EnumType.STRING)

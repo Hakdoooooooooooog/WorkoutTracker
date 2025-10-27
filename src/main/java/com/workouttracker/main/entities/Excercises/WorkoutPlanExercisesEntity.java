@@ -32,11 +32,11 @@ public class WorkoutPlanExercisesEntity {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_plan_id", nullable = false)
+    @JoinColumn(name = "plan_id", nullable = false)
     private WorkoutPlansEntity workoutPlan;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_exercise_id", nullable = false)
+    @JoinColumn(name = "exercise_id", nullable = false)
     private ExercisesEntity exercise;
 
     @Column(name = "order_index", nullable = false)

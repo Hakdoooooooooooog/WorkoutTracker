@@ -41,7 +41,7 @@ public class WorkoutPlansEntity {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private UsersEntity user;
 
     @Column(name = "plan_name", nullable = false, length = 255)

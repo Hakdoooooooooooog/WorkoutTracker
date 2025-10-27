@@ -41,11 +41,11 @@ public class ScheduledWorkoutsEntity {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private UsersEntity user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_plan_id", nullable = false)
+    @JoinColumn(name = "plan_id", nullable = false)
     private WorkoutPlansEntity workoutPlan;
 
     @Column(name = "scheduled_date", nullable = false)

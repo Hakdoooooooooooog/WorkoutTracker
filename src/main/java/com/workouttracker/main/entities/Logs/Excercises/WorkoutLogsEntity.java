@@ -38,15 +38,15 @@ public class WorkoutLogsEntity {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private UsersEntity user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_schedule_id")
+    @JoinColumn(name = "schedule_id")
     private ScheduledWorkoutsEntity scheduledWorkout;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_exercise_id", nullable = false)
+    @JoinColumn(name = "exercise_id", nullable = false)
     private ExercisesEntity exercise;
 
     @Column(name = "set_number", nullable = false)
