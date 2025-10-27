@@ -15,6 +15,7 @@ public class PermissionManager {
     }
 
     public static boolean hasPermission(int currentPermissions, int permissionToCheck) {
+
         return (currentPermissions & permissionToCheck) != 0;
     }
 }

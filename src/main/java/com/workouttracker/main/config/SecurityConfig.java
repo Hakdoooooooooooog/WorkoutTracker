@@ -42,6 +42,7 @@ public class SecurityConfig {
 
                 http.authorizeHttpRequests(auth -> auth
                                 .requestMatchers("/api/v1/auth/**").permitAll() // Allow registration/login without auth
+                                .requestMatchers("api/v1/users/**").hasAuthority("ADMIN")
                                 .anyRequest().authenticated())
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

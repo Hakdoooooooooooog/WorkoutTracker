@@ -62,7 +62,7 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public UsersEntity createUser(UsersEntity user) {
-        int userPermission = PermissionManager.PERM_USER;
+        int userPermission = PermissionManager.PERM_USER; // Default permission
 
         if (usersRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new EntityExistsException("User with email: " + user.getEmail() + " already exists");
@@ -75,6 +75,7 @@ public class UsersServiceImpl implements UsersService {
         String hashedPassword = hashPassword(user.getPassword());
         user.setPassword(hashedPassword);
 
+        // Set default permission for new users
         user.setPermission(userPermission);
 
         log.info("Creating new user: {}", user.getUsername());

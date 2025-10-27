@@ -19,7 +19,8 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (PermissionManager.hasPermission(user.getPermission(), PermissionManager.PERM_ADMIN)) {
+        if (PermissionManager.hasPermission(user.getPermission(),
+                PermissionManager.PERM_ADMIN | PermissionManager.PERM_USER)) {
             return Collections.singletonList(new SimpleGrantedAuthority("ADMIN"));
         }
 
