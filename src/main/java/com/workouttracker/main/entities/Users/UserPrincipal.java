@@ -7,6 +7,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.workouttracker.main.config.PermissionManager;
+
 public class UserPrincipal implements UserDetails {
 
     private UsersEntity user;
@@ -17,6 +19,14 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (PermissionManager.hasPermission(user.getPermission(), PermissionManager.PERM_ADMIN)) {
+            return Collections.singletonList(new SimpleGrantedAuthority("ADMIN"));
+        }
+
+        if (PermissionManager.hasPermission(user.getPermission(), PermissionManager.PERM_COACH)) {
+            return Collections.singletonList(new SimpleGrantedAuthority("COACH"));
+        }
+
         return Collections.singletonList(new SimpleGrantedAuthority("USER"));
     }
 
