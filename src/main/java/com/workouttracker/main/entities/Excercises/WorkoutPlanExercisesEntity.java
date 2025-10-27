@@ -25,18 +25,18 @@ import lombok.Setter;
 @Setter
 @Table(name = "workout_plan_exercises")
 public class WorkoutPlanExercisesEntity {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "plan_exercise_id")
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "plan_id", nullable = false)
+    @JoinColumn(name = "fk_plan_id", nullable = false)
     private WorkoutPlansEntity workoutPlan;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "exercise_id", nullable = false)
+    @JoinColumn(name = "fk_exercise_id", nullable = false)
     private ExercisesEntity exercise;
 
     @Column(name = "order_index", nullable = false)

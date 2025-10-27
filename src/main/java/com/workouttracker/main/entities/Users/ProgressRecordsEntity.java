@@ -35,7 +35,7 @@ public class ProgressRecordsEntity {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "fk_user_id", nullable = false)
     private UsersEntity user;
 
     @Enumerated(EnumType.STRING)
