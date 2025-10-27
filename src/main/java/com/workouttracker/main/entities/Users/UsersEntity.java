@@ -63,7 +63,7 @@ public class UsersEntity {
     @NotBlank(message = "Last name is required")
     private String lastName;
 
-    @Column(name = "permission", nullable = false)
+    @Column(name = "permission", columnDefinition = "INT DEFAULT 1")
     private int permission;
 
     @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
