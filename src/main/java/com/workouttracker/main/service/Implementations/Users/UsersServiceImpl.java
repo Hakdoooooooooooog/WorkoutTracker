@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.workouttracker.main.config.PermissionManager;
 import com.workouttracker.main.dtos.Users.UsersDto;
 import com.workouttracker.main.entities.Users.UsersEntity;
 import com.workouttracker.main.mapper.UsersMapper;
@@ -61,6 +62,8 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public UsersEntity createUser(UsersEntity user) {
+        int userPermission = PermissionManager.PERM_USER;
+
         if (usersRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new EntityExistsException("User with email: " + user.getEmail() + " already exists");
         }
@@ -71,6 +74,8 @@ public class UsersServiceImpl implements UsersService {
 
         String hashedPassword = hashPassword(user.getPassword());
         user.setPassword(hashedPassword);
+
+        user.setPermission(userPermission);
 
         log.info("Creating new user: {}", user.getUsername());
         return usersRepository.save(user);
@@ -114,11 +119,11 @@ public class UsersServiceImpl implements UsersService {
         return passwordEncoder.encode(password);
     }
 
-    public void logoutUser(String email) {
+    // public void logoutUser(String email) {
 
-        log.info("Logout requested for user with email: {}", email);
-        // You could implement token blacklisting here if using JWT
-    }
+    // log.info("Logout requested for user with email: {}", email);
+    // // You could implement token blacklisting here if using JWT
+    // }
 
     public UsersDto getUserByEmail(String email) {
         return usersRepository.findByEmail(email)

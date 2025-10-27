@@ -48,12 +48,12 @@ public class UsersAuthController {
         return apiResponse.success("User created successfully", null);
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<ApiResponseDto> Logout(@RequestBody UsersEntity user) {
-        // Implement logout logic
-        usersService.logoutUser(user.getEmail());
-        return apiResponse.success("User logged out successfully", null);
+    // @PostMapping("/logout")
+    // public ResponseEntity<ApiResponseDto> Logout(@RequestBody UsersEntity user) {
+    // // Implement logout logic
+    // usersService.logoutUser(user.getEmail());
+    // return apiResponse.success("User logged out successfully", null);
 
-    }
+    // }
 
 }
