@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.UUID;
 
 import com.workouttracker.main.entities.Excercises.ExercisesEntity;
+import com.workouttracker.main.entities.Excercises.Plan.WorkoutPlansEntity;
 import com.workouttracker.main.entities.Logs.Excercises.ScheduledWorkoutsEntity;
 import com.workouttracker.main.entities.Logs.Excercises.WorkoutLogsEntity;
-import com.workouttracker.main.entities.Users.Workout.WorkoutPlansEntity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

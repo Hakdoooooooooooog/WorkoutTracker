@@ -1,10 +1,9 @@
-package com.workouttracker.main.entities.Users.Workout;
+package com.workouttracker.main.entities.Excercises.Plan;
 
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
-import com.workouttracker.main.entities.Excercises.WorkoutPlanExercisesEntity;
 import com.workouttracker.main.entities.Users.UsersEntity;
 
 import jakarta.persistence.CascadeType;

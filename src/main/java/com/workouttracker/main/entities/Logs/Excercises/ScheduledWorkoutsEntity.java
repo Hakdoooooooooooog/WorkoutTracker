@@ -4,8 +4,8 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
+import com.workouttracker.main.entities.Excercises.Plan.WorkoutPlansEntity;
 import com.workouttracker.main.entities.Users.UsersEntity;
-import com.workouttracker.main.entities.Users.Workout.WorkoutPlansEntity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

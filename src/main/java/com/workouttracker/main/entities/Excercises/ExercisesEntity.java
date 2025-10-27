@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
+import com.workouttracker.main.entities.Excercises.Plan.WorkoutPlanExercisesEntity;
 import com.workouttracker.main.entities.Users.UsersEntity;
 
 import jakarta.persistence.CascadeType;

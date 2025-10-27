@@ -1,8 +1,8 @@
-package com.workouttracker.main.entities.Excercises;
+package com.workouttracker.main.entities.Excercises.Plan;
 
 import java.util.UUID;
 
-import com.workouttracker.main.entities.Users.Workout.WorkoutPlansEntity;
+import com.workouttracker.main.entities.Excercises.ExercisesEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
