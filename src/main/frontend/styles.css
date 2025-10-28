@@ -1,2 +1,17 @@
 @import "tailwindcss";
-@source "../resources/templates/*.html";
+@source "../resources/templates/**/*.html";
+
+
+@layer components {
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+
+    .error {
+        color: red;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+}
