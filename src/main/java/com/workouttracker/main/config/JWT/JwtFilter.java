@@ -104,6 +104,7 @@ public class JwtFilter extends OncePerRequestFilter {
     public void clearJwtCookie(HttpServletResponse response) {
         jakarta.servlet.http.Cookie jwtCookie = new jakarta.servlet.http.Cookie("jwtToken", "");
         jwtCookie.setHttpOnly(true);
+        // jwtCookie.setSecure(true); // For production, set to true
         jwtCookie.setPath("/");
         jwtCookie.setMaxAge(0); // Expire immediately
         response.addCookie(jwtCookie);
@@ -112,6 +113,7 @@ public class JwtFilter extends OncePerRequestFilter {
     public void setJwtCookie(HttpServletResponse response, String token) {
         jakarta.servlet.http.Cookie jwtCookie = new jakarta.servlet.http.Cookie("jwtToken", token);
         jwtCookie.setHttpOnly(true);
+        // jwtCookie.setSecure(true); // For production, set to true
         jwtCookie.setPath("/");
         jwtCookie.setMaxAge(30 * 60); // 30 minutes in seconds (matches JWT expiration)
         response.addCookie(jwtCookie);
