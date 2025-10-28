@@ -63,10 +63,18 @@ public class JwtFilter extends OncePerRequestFilter {
 
                         // Set the authentication in the security context
                         SecurityContextHolder.getContext().setAuthentication(authentication);
+                    } else {
+                        // Token is invalid/expired, clear the cookie
+                        clearJwtCookie(response);
                     }
+                } else {
+                    // Token exists but username couldn't be extracted, clear the cookie
+                    clearJwtCookie(response);
                 }
             } catch (Exception e) {
                 log.error("Error occurred while processing JWT token: {}", e.getMessage());
+                // Clear cookie on any error to be safe
+                clearJwtCookie(response);
             }
         }
 
@@ -75,10 +83,37 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private String extractJwtToken(HttpServletRequest request) {
+        // First check Authorization header
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             return authorizationHeader.substring(7);
         }
+
+        // Then check cookie
+        if (request.getCookies() != null) {
+            for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
+                if ("jwtToken".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+
         return null;
+    }
+
+    public void clearJwtCookie(HttpServletResponse response) {
+        jakarta.servlet.http.Cookie jwtCookie = new jakarta.servlet.http.Cookie("jwtToken", "");
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setPath("/");
+        jwtCookie.setMaxAge(0); // Expire immediately
+        response.addCookie(jwtCookie);
+    }
+
+    public void setJwtCookie(HttpServletResponse response, String token) {
+        jakarta.servlet.http.Cookie jwtCookie = new jakarta.servlet.http.Cookie("jwtToken", token);
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setPath("/");
+        jwtCookie.setMaxAge(30 * 60); // 30 minutes in seconds (matches JWT expiration)
+        response.addCookie(jwtCookie);
     }
 }

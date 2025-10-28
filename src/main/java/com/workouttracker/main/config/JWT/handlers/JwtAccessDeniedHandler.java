@@ -1,4 +1,4 @@
-package com.workouttracker.main.config.JWT;
+package com.workouttracker.main.config.JWT.handlers;
 
 import java.io.IOException;
 

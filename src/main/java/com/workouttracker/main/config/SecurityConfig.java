@@ -9,15 +9,18 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.workouttracker.main.config.JWT.JwtAccessDeniedHandler;
 import com.workouttracker.main.config.JWT.JwtAuthenticationEntryPoint;
 import com.workouttracker.main.config.JWT.JwtFilter;
+import com.workouttracker.main.config.JWT.handlers.JWTSuccessLogoutHandler;
+import com.workouttracker.main.config.JWT.handlers.JwtAccessDeniedHandler;
+import com.workouttracker.main.config.JWT.handlers.JwtLogoutHandler;
 import com.workouttracker.main.service.Interfaces.Users.UsersDetailsService;
 
 @Configuration
@@ -41,14 +44,19 @@ public class SecurityConfig {
                 http.csrf(csrf -> csrf.disable());
 
                 http.authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/api/v1/auth/**").permitAll() // Allow registration/login without auth
-                                .requestMatchers("api/v1/users/**").hasAuthority("ADMIN")
+                                .requestMatchers("/login", "/register", "/logout")
+                                .permitAll() // Allow home page, registration/login, logout and static resources without
+                                             // authentication
                                 .anyRequest().authenticated())
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .exceptionHandling(exception -> exception
                                                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                                                 .accessDeniedHandler(jwtAccessDeniedHandler))
+                                .logout(logout -> logout
+                                                .addLogoutHandler(new JwtLogoutHandler())
+                                                .logoutSuccessHandler(new JWTSuccessLogoutHandler())
+                                                .permitAll())
                                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
                 return http.build();
@@ -69,5 +77,11 @@ public class SecurityConfig {
         @Bean
         public PasswordEncoder passwordEncoder() {
                 return new BCryptPasswordEncoder();
+        }
+
+        @Bean
+        public WebSecurityCustomizer webSecurityCustomizer() {
+                return (web) -> web.ignoring().requestMatchers("/main.css", "/css/**", "/js/**",
+                                "/images/**");
         }
 }
