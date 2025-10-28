@@ -50,16 +50,6 @@ public class GlobalErrorHandler {
         return "error"; // HTML TEMPLATE NAME
     }
 
-    @ExceptionHandler(AuthenticationException.class)
-    public String handleAuthenticationException(AuthenticationException ex, Model model) {
-        model.addAttribute("error", "Authentication failed");
-        model.addAttribute("loginError", "Authentication failed"); // For login form display
-        model.addAttribute("user", new LoginRequest()); // Add empty login request
-        model.addAttribute("pageTitle", "Login");
-
-        return "features/auth/login"; // Updated template path
-    }
-
     @ExceptionHandler(IllegalArgumentException.class)
     public String handleIllegalArgumentException(IllegalArgumentException ex, Model model) {
         model.addAttribute("error", "Invalid input");
