@@ -1,7 +1,5 @@
 package com.workouttracker.main.exception;
 
-import javax.naming.AuthenticationException;
-
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.MethodArgumentNotValidException;
