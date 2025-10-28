@@ -1,59 +1,60 @@
-package com.workouttracker.main.controller.Auth;
+package com.workouttracker.main.controller.auth;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.workouttracker.main.dtos.ApiResponseDto;
+import com.workouttracker.main.config.JWT.JwtFilter;
 import com.workouttracker.main.dtos.Users.LoginRequest;
-import com.workouttracker.main.entities.Users.UsersEntity;
-import com.workouttracker.main.service.Implementations.ApiResponseImpl;
+
 import com.workouttracker.main.service.Implementations.Users.UsersServiceImpl;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
-import java.util.Map;
-
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
-@RestController
+@Controller
 @AllArgsConstructor
-@RequestMapping("/api/v1/auth")
 public class UsersAuthController {
-    public final UsersServiceImpl usersService;
-    public final ApiResponseImpl apiResponse;
+
+    private final UsersServiceImpl usersService;
+    private final JwtFilter jwtFilter;
+
+    @GetMapping("/login")
+    public String getLoginPage(@ModelAttribute("user") LoginRequest user, Model model) {
+        model.addAttribute("pageTitle", "Login");
+        return "/features/auth/login"; // HTML TEMPLATE NAME
+    }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponseDto> Login(@Valid @RequestBody LoginRequest loginRequest) {
-        // Implement login logic
+    public String postLoginPage(@Valid @ModelAttribute("user") LoginRequest user,
+            BindingResult bindingResult,
+            Model model,
+            HttpServletResponse response) {
+        model.addAttribute("pageTitle", "Login");
 
-        String token = usersService.loginUser(loginRequest.getUsername(), loginRequest.getPassword());
-        if (token != null) {
-            Map<String, Object> userInfo = Map.of(
-                    "token", token,
-                    "user", usersService.getUserByUsername(loginRequest.getUsername()));
-
-            return apiResponse.success("User logged in successfully", userInfo);
-        } else {
-            return apiResponse.error("Invalid credentials", "Invalid username or password", null);
+        if (bindingResult.hasErrors()) {
+            return "/features/auth/login"; // HTML TEMPLATE NAME
         }
 
+        if (model.containsAttribute("logoutMessage")) {
+            model.addAttribute("logoutMessage", model.getAttribute("logoutMessage"));
+        }
+
+        // Attempt login
+        String token = usersService.loginUser(user.getUsername(), user.getPassword());
+
+        if (token != null) {
+            jwtFilter.setJwtCookie(response, token);
+
+            return "redirect:/"; // Redirect to home page
+        } else {
+            model.addAttribute("loginError", "Invalid username or password");
+            return "/features/auth/login";
+        }
     }
-
-    @PostMapping("/register")
-    public ResponseEntity<ApiResponseDto> Register(@Valid @RequestBody UsersEntity user) {
-        usersService.createUser(user);
-        return apiResponse.success("User created successfully", null);
-    }
-
-    // @PostMapping("/logout")
-    // public ResponseEntity<ApiResponseDto> Logout(@RequestBody UsersEntity user) {
-    // // Implement logout logic
-    // usersService.logoutUser(user.getEmail());
-    // return apiResponse.success("User logged out successfully", null);
-
-    // }
 
 }
