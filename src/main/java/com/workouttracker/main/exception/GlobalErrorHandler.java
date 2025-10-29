@@ -45,7 +45,7 @@ public class GlobalErrorHandler {
         model.addAttribute("error", "Entity already exists");
         model.addAttribute("errors", ex.getMessage());
 
-        return "error"; // HTML TEMPLATE NAME
+        return "features/auth/register"; // HTML TEMPLATE NAME
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

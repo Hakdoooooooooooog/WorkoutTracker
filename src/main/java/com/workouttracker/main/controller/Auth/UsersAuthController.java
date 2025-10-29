@@ -6,6 +6,7 @@ import com.workouttracker.main.dtos.Users.RegisterRequest;
 
 import com.workouttracker.main.service.Implementations.Users.UsersServiceImpl;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @AllArgsConstructor
@@ -27,7 +29,15 @@ public class UsersAuthController {
     @GetMapping("/login")
     public String getLoginPage(Model model) {
         model.addAttribute("pageTitle", "Login");
-        model.addAttribute("user", new LoginRequest());
+
+        // Create login request, prepopulating username if available from flash
+        // attributes
+        LoginRequest loginRequest = new LoginRequest();
+        if (model.containsAttribute("username")) {
+            loginRequest.setUsername((String) model.getAttribute("username"));
+        }
+
+        model.addAttribute("user", loginRequest);
         return "/features/auth/login"; // HTML TEMPLATE NAME
     }
 
@@ -70,7 +80,8 @@ public class UsersAuthController {
     @PostMapping("/register")
     public String postRegisterPage(@Valid @ModelAttribute RegisterRequest user,
             BindingResult bindingResult,
-            Model model) {
+            Model model,
+            RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("pageTitle", "Register");
@@ -81,8 +92,19 @@ public class UsersAuthController {
         // Attempt registration
         try {
             usersService.registerUser(user);
-            model.addAttribute("successMessage", "Registration successful! Please login.");
+            redirectAttributes.addFlashAttribute("successMessage", "Registration successful! Please login.");
+            redirectAttributes.addFlashAttribute("username", user.getUsername());
             return "redirect:/login";
+        } catch (EntityExistsException e) {
+            // Handle duplicate username/email as field errors
+            if (e.getMessage().contains("Username")) {
+                bindingResult.rejectValue("username", "duplicate", "Username already exists");
+            } else if (e.getMessage().contains("Email")) {
+                bindingResult.rejectValue("email", "duplicate", "Email already exists");
+            }
+            model.addAttribute("pageTitle", "Register");
+            model.addAttribute(BindingResult.MODEL_KEY_PREFIX + "user", bindingResult);
+            return "/features/auth/register";
         } catch (Exception e) {
             model.addAttribute("registerError", "Registration failed: " + e.getMessage());
             return "/features/auth/register";

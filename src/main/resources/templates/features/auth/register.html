@@ -9,6 +9,11 @@
   <body>
     <div class="form-container">
       <h1 class="title">Register</h1>
+      <div
+        th:if="${successMessage}"
+        class="success-message"
+        th:text="${successMessage}"
+      ></div>
       <form
         class="user-form"
         th:action="@{/register}"

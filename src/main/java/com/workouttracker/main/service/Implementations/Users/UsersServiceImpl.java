@@ -157,6 +157,7 @@ public class UsersServiceImpl implements UsersService {
         user.setFirstName(registerRequest.getFirstName());
         user.setLastName(registerRequest.getLastName());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        user.setPermission(PermissionManager.PERM_USER);
 
         // Save user
         usersRepository.save(user);
