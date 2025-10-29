@@ -24,17 +24,16 @@ public class UsersAuthController {
     private final JwtFilter jwtFilter;
 
     @GetMapping("/login")
-    public String getLoginPage(@ModelAttribute("user") LoginRequest user, Model model) {
+    public String getLoginPage(@ModelAttribute LoginRequest user, Model model) {
         model.addAttribute("pageTitle", "Login");
         return "/features/auth/login"; // HTML TEMPLATE NAME
     }
 
     @PostMapping("/login")
-    public String postLoginPage(@Valid @ModelAttribute("user") LoginRequest user,
+    public String postLoginPage(@Valid @ModelAttribute LoginRequest user,
             BindingResult bindingResult,
             Model model,
             HttpServletResponse response) {
-        model.addAttribute("pageTitle", "Login");
 
         if (bindingResult.hasErrors()) {
             return "/features/auth/login"; // HTML TEMPLATE NAME
