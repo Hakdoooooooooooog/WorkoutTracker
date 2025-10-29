@@ -1,33 +1,112 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title th:text="${pageTitle}"></title>
-    <link rel="stylesheet" href="@{./main.css}">
-</head>
-<body>
-    <div class="container">
-        <h1>Register</h1>
-        <form th:action="@{/register}" method="post" th:object="${user}">
-            <div>
-                <label for="username">Username:</label>
-                <input type="text" id="username" th:field="*{username}" required>
-                <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="error"></span>
-            </div>
-            <div>
-                <label for="email">Email:</label>
-                <input type="email" id="email" th:field="*{email}" required>
-                <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error"></span>
-            </div>
-            <div>
-                <label for="password">Password:</label>
-                <input type="password" id="password" th:field="*{password}" required>
-                <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error"></span>
-            </div>
-            <button type="submit">Register</button>
-        </form>
-        <p>Already have an account? <a th:href="@{/login}">Login here</a></p>
+    <link rel="stylesheet" th:href="@{./main.css}" />
+  </head>
+  <body>
+    <div class="form-container">
+      <h1 class="title">Register</h1>
+      <form
+        class="user-form"
+        th:action="@{/register}"
+        method="post"
+        th:object="${user}"
+      >
+        <div class="flex flex-col gap-2">
+          <label for="username">Username:</label>
+          <input
+            class="border-2 border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md px-3 py-2 w-full"
+            type="text"
+            id="username"
+            th:field="*{username}"
+            autocomplete="username"
+            required
+          />
+          <span
+            th:if="${#fields.hasErrors('username')}"
+            th:errors="*{username}"
+            class="error"
+          ></span>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label for="email">Email:</label>
+          <input
+            class="border-2 border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md px-3 py-2 w-full"
+            type="email"
+            id="email"
+            th:field="*{email}"
+            autocomplete="email"
+            required
+          />
+          <span
+            th:if="${#fields.hasErrors('email')}"
+            th:errors="*{email}"
+            class="error"
+          ></span>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label for="firstName">First Name:</label>
+          <input
+            class="border-2 border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md px-3 py-2 w-full"
+            type="text"
+            id="firstName"
+            th:field="*{firstName}"
+            autocomplete="given-name"
+            required
+          />
+          <span
+            th:if="${#fields.hasErrors('firstName')}"
+            th:errors="*{firstName}"
+            class="error"
+          ></span>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label for="lastName">Last Name:</label>
+          <input
+            class="border-2 border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md px-3 py-2 w-full"
+            type="text"
+            id="lastName"
+            th:field="*{lastName}"
+            autocomplete="family-name"
+            required
+          />
+          <span
+            th:if="${#fields.hasErrors('lastName')}"
+            th:errors="*{lastName}"
+            class="error"
+          ></span>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label for="password">Password:</label>
+          <input
+            class="border-2 border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md px-3 py-2 w-full"
+            type="password"
+            id="password"
+            th:field="*{password}"
+            autocomplete="new-password"
+            required
+          />
+          <span
+            th:if="${#fields.hasErrors('password')}"
+            th:errors="*{password}"
+            class="error"
+          ></span>
+        </div>
+
+        <div th:if="${registerError}" class="error">
+          <p th:text="${registerError}"></p>
+        </div>
+        <button
+          type="submit"
+          class="p-4 text-sm bg-gray-200 w-full rounded-md cursor-pointer hover:bg-gray-300"
+        >
+          Register
+        </button>
+      </form>
+      <p>Already have an account? <a th:href="@{/login}">Login here</a></p>
     </div>
-</body>
+  </body>
 </html>

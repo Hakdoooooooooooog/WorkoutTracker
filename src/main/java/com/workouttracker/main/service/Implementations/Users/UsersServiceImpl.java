@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.workouttracker.main.config.PermissionManager;
+import com.workouttracker.main.dtos.Users.RegisterRequest;
 import com.workouttracker.main.dtos.Users.UsersDto;
 import com.workouttracker.main.entities.Users.UsersEntity;
 import com.workouttracker.main.mapper.UsersMapper;
@@ -136,6 +137,30 @@ public class UsersServiceImpl implements UsersService {
         return usersRepository.findByUsername(username)
                 .map(usersMapper::toDto)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
+    }
+
+    @Override
+    public void registerUser(RegisterRequest registerRequest) {
+        // Check if user already exists
+        if (usersRepository.findByUsername(registerRequest.getUsername()).isPresent()) {
+            throw new EntityExistsException("Username already exists: " + registerRequest.getUsername());
+        }
+
+        if (usersRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
+            throw new EntityExistsException("Email already exists: " + registerRequest.getEmail());
+        }
+
+        // Create new user entity
+        UsersEntity user = new UsersEntity();
+        user.setUsername(registerRequest.getUsername());
+        user.setEmail(registerRequest.getEmail());
+        user.setFirstName(registerRequest.getFirstName());
+        user.setLastName(registerRequest.getLastName());
+        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+
+        // Save user
+        usersRepository.save(user);
+        log.info("User registered successfully: {}", registerRequest.getUsername());
     }
 
 }
