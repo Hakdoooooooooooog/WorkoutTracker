@@ -2,6 +2,7 @@ package com.workouttracker.main.controller.auth;
 
 import com.workouttracker.main.config.JWT.JwtFilter;
 import com.workouttracker.main.dtos.Users.LoginRequest;
+import com.workouttracker.main.dtos.Users.RegisterRequest;
 
 import com.workouttracker.main.service.Implementations.Users.UsersServiceImpl;
 
@@ -24,8 +25,9 @@ public class UsersAuthController {
     private final JwtFilter jwtFilter;
 
     @GetMapping("/login")
-    public String getLoginPage(@ModelAttribute LoginRequest user, Model model) {
+    public String getLoginPage(Model model) {
         model.addAttribute("pageTitle", "Login");
+        model.addAttribute("user", new LoginRequest());
         return "/features/auth/login"; // HTML TEMPLATE NAME
     }
 
@@ -36,6 +38,8 @@ public class UsersAuthController {
             HttpServletResponse response) {
 
         if (bindingResult.hasErrors()) {
+            model.addAttribute("pageTitle", "Login");
+            model.addAttribute(BindingResult.MODEL_KEY_PREFIX + "user", bindingResult);
             return "/features/auth/login"; // HTML TEMPLATE NAME
         }
 
@@ -53,6 +57,35 @@ public class UsersAuthController {
         } else {
             model.addAttribute("loginError", "Invalid username or password");
             return "/features/auth/login";
+        }
+    }
+
+    @GetMapping("/register")
+    public String getRegisterPage(Model model) {
+        model.addAttribute("pageTitle", "Register");
+        model.addAttribute("user", new RegisterRequest());
+        return "/features/auth/register";
+    }
+
+    @PostMapping("/register")
+    public String postRegisterPage(@Valid @ModelAttribute RegisterRequest user,
+            BindingResult bindingResult,
+            Model model) {
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("pageTitle", "Register");
+            model.addAttribute(BindingResult.MODEL_KEY_PREFIX + "user", bindingResult);
+            return "/features/auth/register";
+        }
+
+        // Attempt registration
+        try {
+            usersService.registerUser(user);
+            model.addAttribute("successMessage", "Registration successful! Please login.");
+            return "redirect:/login";
+        } catch (Exception e) {
+            model.addAttribute("registerError", "Registration failed: " + e.getMessage());
+            return "/features/auth/register";
         }
     }
 

@@ -2,11 +2,27 @@
 @source "../resources/templates/**/*.html";
 
 
+
 @layer components {
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 1rem;
+
+    body {
+        @apply bg-gray-100;
+    }
+
+    label {
+        @apply text-xl font-bold;
+    }
+
+    .form-container{
+        @apply flex flex-col gap-4 items-center justify-center w-full h-dvh;
+    }
+
+    .title {
+        @apply text-2xl font-bold;
+    }
+
+    .user-form{
+        @apply flex flex-col gap-4 w-full max-w-sm;
     }
 
     .error {

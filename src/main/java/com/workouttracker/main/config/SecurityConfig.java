@@ -54,7 +54,7 @@ public class SecurityConfig {
                                                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                                                 .accessDeniedHandler(jwtAccessDeniedHandler))
                                 .logout(logout -> logout
-                                                .addLogoutHandler(new JwtLogoutHandler())
+                                                .addLogoutHandler(new JwtLogoutHandler(jwtFilter))
                                                 .logoutSuccessHandler(new JWTSuccessLogoutHandler())
                                                 .permitAll())
                                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
