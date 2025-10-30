@@ -1,144 +1,55 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title th:text="${pageTitle}"></title>
-    <link rel="stylesheet" th:href="@{./main.css}" />
-  </head>
-  <body>
-    <div class="form-container">
-      <h1 class="title">Register</h1>
-      <div
-        th:if="${successMessage}"
-        class="success-message"
-        th:text="${successMessage}"
-      ></div>
-      <form
-        class="user-form"
-        th:action="@{/register}"
-        method="post"
-        th:object="${user}"
-      >
-        <div class="flex flex-col gap-2">
-          <label for="username">Username:</label>
-          <input
-            class="border-2 border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md px-3 py-2 w-full"
-            type="text"
-            id="username"
-            th:field="*{username}"
-            autocomplete="username"
-            required
-          />
-          <span
-            th:if="${#fields.hasErrors('username')}"
-            th:errors="*{username}"
-            class="error"
-          ></span>
-        </div>
-        <div class="flex flex-col gap-2">
-          <label for="email">Email:</label>
-          <input
-            class="border-2 border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md px-3 py-2 w-full"
-            type="email"
-            id="email"
-            th:field="*{email}"
-            autocomplete="email"
-            required
-          />
-          <span
-            th:if="${#fields.hasErrors('email')}"
-            th:errors="*{email}"
-            class="error"
-          ></span>
-        </div>
-        <div class="flex flex-col gap-2">
-          <label for="firstName">First Name:</label>
-          <input
-            class="border-2 border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md px-3 py-2 w-full"
-            type="text"
-            id="firstName"
-            th:field="*{firstName}"
-            autocomplete="given-name"
-            required
-          />
-          <span
-            th:if="${#fields.hasErrors('firstName')}"
-            th:errors="*{firstName}"
-            class="error"
-          ></span>
-        </div>
-        <div class="flex flex-col gap-2">
-          <label for="lastName">Last Name:</label>
-          <input
-            class="border-2 border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md px-3 py-2 w-full"
-            type="text"
-            id="lastName"
-            th:field="*{lastName}"
-            autocomplete="family-name"
-            required
-          />
-          <span
-            th:if="${#fields.hasErrors('lastName')}"
-            th:errors="*{lastName}"
-            class="error"
-          ></span>
-        </div>
-        <div class="flex flex-col gap-2">
-          <label for="password">Password:</label>
-          <input
-            class="border-2 border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md px-3 py-2 w-full"
-            type="password"
-            id="password"
-            th:field="*{password}"
-            autocomplete="new-password"
-            required
-          />
-          <span
-            th:if="${#fields.hasErrors('password')}"
-            th:errors="*{password}"
-            class="error"
-          ></span>
-        </div>
-        <div class="flex flex-col gap-2">
-          <label for="confirmPassword">Confirm Password:</label>
-          <input
-            class="border-2 border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md px-3 py-2 w-full"
-            type="password"
-            id="confirmPassword"
-            th:field="*{confirmPassword}"
-            autocomplete="new-password"
-            required
-          />
-          <span
-            th:if="${#fields.hasErrors('confirmPassword')}"
-            th:errors="*{confirmPassword}"
-            class="error"
-          ></span>
-        </div>
+<div th:replace="~{common/head}"></div>
 
-        <div th:if="${#fields.hasErrors('passwordConfirmed')}" class="error">
-          <span th:errors="*{passwordConfirmed}"></span>
-        </div>
+<div class="form-container">
+  <h1 class="title" th:text="${formTitle}"></h1>
 
-        <div th:if="${#fields.hasGlobalErrors()}" class="error">
-          <span
-            th:each="error : ${#fields.globalErrors()}"
-            th:text="${error.defaultMessage}"
-          ></span>
-        </div>
-
-        <div th:if="${registerError}" class="error">
-          <p th:text="${registerError}"></p>
-        </div>
-        <button
-          type="submit"
-          class="p-4 text-sm bg-gray-200 w-full rounded-md cursor-pointer hover:bg-gray-300"
-        >
-          Register
-        </button>
-      </form>
-      <p>Already have an account? <a th:href="@{/login}">Login here</a></p>
+  <form class="user-form" th:action="@{/register}" method="post" th:object="${user}">
+    <div
+      th:replace="~{common/input-field :: input-field(fieldId='username', fieldName='username', fieldLabel='Username', fieldType='text', autocomplete='username', required=true)}">
     </div>
-  </body>
+
+    <div
+      th:replace="~{common/input-field :: input-field(fieldId='email', fieldName='email', fieldLabel='Email', fieldType='email', autocomplete='email', required=true)}">
+    </div>
+
+    <div
+      th:replace="~{common/input-field :: input-field(fieldId='firstName', fieldName='firstName', fieldLabel='First Name', fieldType='text', autocomplete='given-name', required=true)}">
+    </div>
+
+    <div
+      th:replace="~{common/input-field :: input-field(fieldId='lastName', fieldName='lastName', fieldLabel='Last Name', fieldType='text', autocomplete='family-name', required=true)}">
+    </div>
+
+    <div
+      th:replace="~{common/input-field :: input-field(fieldId='password', fieldName='password', fieldLabel='Password', fieldType='password', autocomplete='new-password', required=true)}">
+    </div>
+
+    <div
+      th:replace="~{common/input-field :: input-field(fieldId='confirmPassword', fieldName='confirmPassword', fieldLabel='Confirm Password', fieldType='password', autocomplete='new-password', required=true)}">
+    </div>
+
+    <div th:if="${#fields.hasErrors('passwordConfirmed')}" class="error">
+      <span th:errors="*{passwordConfirmed}"></span>
+    </div>
+
+    <div th:if="${#fields.hasGlobalErrors()}" class="error">
+      <span th:each="error : ${#fields.globalErrors()}" th:text="${error.defaultMessage}"></span>
+    </div>
+
+    <div th:if="${registerError}" class="error">
+      <p th:text="${registerError}"></p>
+    </div>
+
+    <div th:replace="~{common/submit-button :: submit-button(buttonText='Register')}"></div>
+  </form>
+
+  <div th:with="footerText='Already have an account?', footerLinkText='Login here', footerLink=@{/login}">
+    <div th:replace="~{common/form-footer :: form-footer}"></div>
+  </div>
+
+</div>
+
+
+</body>
+
 </html>
