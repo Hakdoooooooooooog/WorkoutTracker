@@ -1,16 +1,9 @@
-<div class="flex flex-col gap-2" th:fragment="input-field">
+<div class="flex flex-col gap-2"
+  th:fragment="input-field(fieldId, fieldName, fieldLabel, fieldType, autocomplete, required)">
   <label th:for="${fieldId}" th:text="${fieldLabel} + ':'"></label>
   <input
     class="border-2 border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md px-3 py-2 w-full"
-    th:type="${fieldType}"
-    th:id="${fieldId}"
-    th:field="*{__${fieldName}__}"
-    th:autocomplete="${autocomplete}"
-    th:required="${required}"
-  />
-  <span
-    th:if="${#fields.hasErrors(fieldName)}"
-    th:errors="*{__${fieldName}__}"
-    class="error"
-  ></span>
+    th:type="${fieldType}" th:id="${fieldId}" th:field="*{__${fieldName}__}" th:autocomplete="${autocomplete}"
+    th:required="${required}" />
+  <span th:if="${#fields.hasErrors(fieldName)}" th:errors="*{__${fieldName}__}" class="error"></span>
 </div>

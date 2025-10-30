@@ -21,8 +21,8 @@
     <div th:insert="~{common/ui/submit-button :: submit-button(buttonText='Login')}"></div>
   </form>
 
-  <div th:with="footerText='Don\'t have an account?', footerLinkText='Register here', footerLink=@{/register}">
-    <div th:replace="~{common/ui/form/form-footer :: form-footer}"></div>
+  <div
+    th:replace="~{common/ui/form/form-footer :: form-footer(footerText='Don\'t have an account?', footerLinkText='Register here', footerLink=@{/register})}">
   </div>
 </div>
 
