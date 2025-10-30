@@ -1,28 +1,28 @@
 <div th:replace="~{common/head}"></div>
 
-<div th:replace="~{common/messages :: messages}"></div>
+<div th:replace="~{common/ui/messages :: messages}"></div>
 
 <div class="form-container">
-  <h1 class="title" th:text="${formTitle}"></h1>
+  <h1 class="title">Login</h1>
 
   <form class="user-form" th:action="@{/login}" method="post" th:object="${user}">
     <div
-      th:replace="~{common/input-field :: input-field(fieldId='username', fieldName='username', fieldLabel='Username', fieldType='text', autocomplete='username', required=true)}">
+      th:replace="~{common/ui/input-field :: input-field(fieldId='username', fieldName='username', fieldLabel='Username', fieldType='text', autocomplete='username', required=true)}">
     </div>
 
     <div
-      th:replace="~{common/input-field :: input-field(fieldId='password', fieldName='password', fieldLabel='Password', fieldType='password', autocomplete='current-password', required=true)}">
+      th:replace="~{common/ui/input-field :: input-field(fieldId='password', fieldName='password', fieldLabel='Password', fieldType='password', autocomplete='current-password', required=true)}">
     </div>
 
     <div th:if="${loginError}" class="error">
       <p th:text="${loginError}"></p>
     </div>
 
-    <div th:insert="~{common/submit-button :: submit-button(buttonText='Login')}"></div>
+    <div th:insert="~{common/ui/submit-button :: submit-button(buttonText='Login')}"></div>
   </form>
 
   <div th:with="footerText='Do not have an account?', footerLinkText='Register here', footerLink=@{/register}">
-    <div th:replace="~{common/form-footer :: form-footer}"></div>
+    <div th:replace="~{common/ui/form/form-footer :: form-footer}"></div>
   </div>
 </div>
 

@@ -29,7 +29,6 @@ public class UsersAuthController {
     @GetMapping("/login")
     public String getLoginPage(Model model) {
         model.addAttribute("pageTitle", "Login");
-        model.addAttribute("formTitle", "Login");
 
         // Create login request, prepopulating username if available from flash
         // attributes
@@ -50,7 +49,6 @@ public class UsersAuthController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("pageTitle", "Login");
-            model.addAttribute("formTitle", "Login");
             model.addAttribute(BindingResult.MODEL_KEY_PREFIX + "user", bindingResult);
             return "/features/auth/login"; // HTML TEMPLATE NAME
         }
@@ -68,7 +66,6 @@ public class UsersAuthController {
             return "redirect:/"; // Redirect to home page
         } else {
             model.addAttribute("pageTitle", "Login");
-            model.addAttribute("formTitle", "Login");
             model.addAttribute("loginError", "Invalid username or password");
             return "/features/auth/login";
         }
@@ -77,7 +74,6 @@ public class UsersAuthController {
     @GetMapping("/register")
     public String getRegisterPage(Model model) {
         model.addAttribute("pageTitle", "Register");
-        model.addAttribute("formTitle", "Register");
         model.addAttribute("user", new RegisterRequest());
         return "/features/auth/register";
     }
@@ -90,7 +86,6 @@ public class UsersAuthController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("pageTitle", "Register");
-            model.addAttribute("formTitle", "Register");
             model.addAttribute(BindingResult.MODEL_KEY_PREFIX + "user", bindingResult);
             return "/features/auth/register";
         }
@@ -109,12 +104,10 @@ public class UsersAuthController {
                 bindingResult.rejectValue("email", "duplicate", "Email already exists");
             }
             model.addAttribute("pageTitle", "Register");
-            model.addAttribute("formTitle", "Register");
             model.addAttribute(BindingResult.MODEL_KEY_PREFIX + "user", bindingResult);
             return "/features/auth/register";
         } catch (Exception e) {
             model.addAttribute("pageTitle", "Register");
-            model.addAttribute("formTitle", "Register");
             model.addAttribute("registerError", "Registration failed: " + e.getMessage());
             return "/features/auth/register";
         }
