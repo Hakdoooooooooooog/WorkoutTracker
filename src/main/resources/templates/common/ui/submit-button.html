@@ -1,6 +1,5 @@
-<button
-  type="submit"
-  class="p-4 text-sm bg-gray-200 w-full rounded-md cursor-pointer hover:bg-gray-300"
-  th:text="${buttonText}"
-  th:fragment="submit-button"
-></button>
+<button type="submit" class="p-4 text-sm w-full rounded-md cursor-pointer"
+  th:with="buttonType=${buttonType ?: 'primary'}" th:disabled="${#fields.hasErrors()}" th:text="${buttonText}"
+  th:classappend="${buttonType == 'secondary' ? 'bg-gray-500 text-white hover:bg-gray-600' :
+                   buttonType == 'ghost' ? 'bg-transparent border border-gray-500 text-gray-500 hover:bg-gray-100' :
+                   'bg-blue-500 text-white hover:bg-blue-600'}" th:fragment="submit-button(buttonText)"></button>
