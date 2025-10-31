@@ -4,6 +4,7 @@
   <h1 class="title">Register</h1>
 
   <form class="user-form" th:action="@{/register}" method="post" th:object="${user}">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
     <div
       th:replace="~{common/ui/input-field :: input-field(fieldId='username', fieldName='username', fieldLabel='Username', fieldType='text', autocomplete='username', required=true, hxPost='/api/validate/username', hxTrigger='change, keyup delay:500ms', hxTarget='#username-error')}">
     </div>

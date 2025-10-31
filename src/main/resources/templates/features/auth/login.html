@@ -1,11 +1,13 @@
 <div th:replace="~{common/head}"></div>
 
-<div th:replace="~{common/ui/messages :: messages}"></div>
 
 <div class="form-container">
   <h1 class="title">Login</h1>
 
+  <div th:replace="~{common/ui/messages :: messages}"></div>
+
   <form class="user-form" th:action="@{/login}" method="post" th:object="${user}">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
     <div
       th:replace="~{common/ui/input-field :: input-field(fieldId='username', fieldName='username', fieldLabel='Username', fieldType='text', autocomplete='username', required=true)}">
     </div>
