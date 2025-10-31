@@ -30,4 +30,19 @@
         font-size: 0.875rem;
         margin-top: 0.25rem;
     }
+
+    .success {
+        color: green;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+
+    /* .htmx-indicator {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .htmx-indicator.htmx-request {
+        opacity: 1;
+    } */
 }

@@ -32,4 +32,16 @@ public class UsersDetailsServiceImpl implements UsersDetailsService {
         return new UserPrincipal(user);
     }
 
+    public void validateUsername(String username) throws IllegalArgumentException {
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("Invalid username");
+        }
+
+        usersRepository.findByUsername(username)
+                .orElseThrow(() -> {
+                    log.warn("User validation failed: User '{}' not found", username);
+                    return new IllegalArgumentException("User not found with username: " + username);
+                });
+    }
+
 }

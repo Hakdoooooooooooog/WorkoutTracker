@@ -164,4 +164,16 @@ public class UsersServiceImpl implements UsersService {
         log.info("User registered successfully: {}", registerRequest.getUsername());
     }
 
+    public void validateUsername(String username) {
+        if (usersRepository.findByUsername(username).isPresent()) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+    }
+
+    public void validateEmail(String email) {
+        if (usersRepository.findByEmail(email).isPresent()) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+    }
+
 }

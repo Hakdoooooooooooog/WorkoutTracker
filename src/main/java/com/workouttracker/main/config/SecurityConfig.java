@@ -44,7 +44,7 @@ public class SecurityConfig {
                 http.csrf(csrf -> csrf.disable());
 
                 http.authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/login", "/register", "/logout")
+                                .requestMatchers("/login", "/register", "/logout", "/api/validate/**")
                                 .permitAll() // Allow home page, registration/login, logout and static resources without
                                              // authentication
                                 .anyRequest().authenticated())
