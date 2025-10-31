@@ -7,18 +7,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.workouttracker.main.service.Implementations.Users.UsersServiceImpl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/validate")
 public class ValidationController {
 
-    @Autowired
-    private UsersServiceImpl usersService;
+    private final UsersServiceImpl usersService;
 
     @PostMapping("/username")
-    public ResponseEntity<String> validateUsername(@RequestParam String username) throws InterruptedException {
+    public ResponseEntity<String> validateUsername(@RequestParam String username) {
         try {
             usersService.validateUsername(username);
             return ResponseEntity.ok().build();
@@ -28,7 +29,7 @@ public class ValidationController {
     }
 
     @PostMapping("/email")
-    public ResponseEntity<String> validateEmail(@RequestParam String email) throws InterruptedException {
+    public ResponseEntity<String> validateEmail(@RequestParam String email) {
         try {
             usersService.validateEmail(email);
             return ResponseEntity.ok().build();

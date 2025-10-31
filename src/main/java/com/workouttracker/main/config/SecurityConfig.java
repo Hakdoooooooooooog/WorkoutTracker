@@ -1,5 +1,7 @@
 package com.workouttracker.main.config;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +11,6 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,14 +40,16 @@ public class SecurityConfig {
         @Autowired
         private JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
+        private final List<String> publicUrls = List.of("/", "/login", "/register", "/logout", "/api/validate/**",
+                        "/main.css", "/css/**", "/js/**", "/images/**");
+
         @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http.csrf(csrf -> csrf.ignoringRequestMatchers("/logout"));
 
                 http.authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/login", "/register", "/logout", "/api/validate/**")
-                                .permitAll() // Allow home page, registration/login, logout and static resources without
-                                             // authentication
+                                .requestMatchers(publicUrls.toArray(String[]::new))
+                                .permitAll() // Allow home page, registration/login without authentication
                                 .anyRequest().authenticated())
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -63,25 +66,19 @@ public class SecurityConfig {
         }
 
         @Bean
-        public AuthenticationProvider authenticationProvider() {
+        AuthenticationProvider authenticationProvider() {
                 DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
                 provider.setPasswordEncoder(passwordEncoder());
                 return provider;
         }
 
         @Bean
-        public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
                 return authConfig.getAuthenticationManager();
         }
 
         @Bean
-        public PasswordEncoder passwordEncoder() {
+        PasswordEncoder passwordEncoder() {
                 return new BCryptPasswordEncoder();
-        }
-
-        @Bean
-        public WebSecurityCustomizer webSecurityCustomizer() {
-                return (web) -> web.ignoring().requestMatchers("/main.css", "/css/**", "/js/**",
-                                "/images/**");
         }
 }
