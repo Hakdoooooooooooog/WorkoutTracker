@@ -1,13 +1,13 @@
 <div class="flex flex-col gap-2"
   th:fragment="input-field(fieldId, fieldName, fieldLabel, fieldType, autocomplete, required)"
-  th:with="hxGet=${hxGet ?: ''}, hxTrigger=${(fieldName == 'username' or fieldName == 'email') ? 'keyup changed delay:500ms' : ''}, hxTarget=${hxTarget ?: ''}">
+  th:with="hxPost=${hxPost ?: ''}, hxTrigger=${(fieldName == 'username' or fieldName == 'email') ? 'keyup changed delay:500ms' : ''}, hxTarget=${hxTarget ?: ''}">
   <label th:for="${fieldId}" th:text="${fieldLabel} + ':'"></label>
 
   <div class="relative">
     <input
       class="border-2 border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md px-3 py-2 w-full pr-10"
       th:type="${fieldType}" th:id="${fieldId}" th:field="*{__${fieldName}__}" th:autocomplete="${autocomplete}"
-      th:required="${required}" th:hx-post="${hxGet}" th:hx-trigger="${hxTrigger}" th:hx-target="${hxTarget}"
+      th:required="${required}" th:hx-post="${hxPost}" th:hx-trigger="${hxTrigger}" th:hx-target="${hxTarget}"
       th:hx-params="${fieldName}"
       th:hx-indicator="${(fieldName == 'username' or fieldName == 'email') ? '#spinner-' + fieldId : ''}" />
 
