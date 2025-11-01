@@ -31,6 +31,7 @@ public class UsersServiceImpl implements UsersService {
     private final UsersRepository usersRepository;
     private final UsersMapper usersMapper;
     private final JWTServiceImpl jwtService;
+    private final VerificationCodeService verificationCodeService;
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -150,6 +151,15 @@ public class UsersServiceImpl implements UsersService {
             throw new EntityExistsException("Email already exists: " + registerRequest.getEmail());
         }
 
+        // Verify the email verification code
+        boolean isCodeValid = verificationCodeService.verifyRegistrationCode(
+                registerRequest.getEmail(),
+                registerRequest.getVerificationCode());
+
+        if (!isCodeValid) {
+            throw new IllegalArgumentException("Invalid or expired verification code");
+        }
+
         // Create new user entity
         UsersEntity user = new UsersEntity();
         user.setUsername(registerRequest.getUsername());
@@ -158,6 +168,7 @@ public class UsersServiceImpl implements UsersService {
         user.setLastName(registerRequest.getLastName());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setPermission(PermissionManager.PERM_USER);
+        user.setVerified(true); // Mark as verified since they provided valid code
 
         // Save user
         usersRepository.save(user);
@@ -174,6 +185,46 @@ public class UsersServiceImpl implements UsersService {
         if (usersRepository.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("Email already exists");
         }
+    }
+
+    public void sendPasswordResetCode(String email) {
+        // Check if user exists
+        usersRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("No account found with email: " + email));
+
+        // Generate and send reset code
+        verificationCodeService.generatePasswordResetCode(email);
+        log.info("Password reset code sent to: {}", email);
+    }
+
+    public void resetPassword(String email, String code, String newPassword) {
+        // Verify code
+        boolean isCodeValid = verificationCodeService.verifyPasswordResetCode(email, code);
+
+        if (!isCodeValid) {
+            throw new IllegalArgumentException("Invalid or expired verification code");
+        }
+
+        // Find user and update password
+        UsersEntity user = usersRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        usersRepository.save(user);
+
+        log.info("Password reset successfully for user: {}", user.getUsername());
+    }
+
+    public String sendEmailVerificationCode(String email) {
+        // Check if email already exists
+        if (usersRepository.findByEmail(email).isPresent()) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+
+        // Generate and return verification code
+        String code = verificationCodeService.generateRegistrationCode(email);
+        log.info("Email verification code sent to: {}", email);
+        return code;
     }
 
 }

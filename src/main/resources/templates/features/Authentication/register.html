@@ -1,0 +1,133 @@
+<div th:replace="~{common/head}"></div>
+
+<div class="form-container">
+  <h1 class="title">Register</h1>
+
+  <form class="user-form" th:action="@{/register}" method="post" th:object="${user}">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+    <div
+      th:replace="~{common/ui/input-field :: input-field(fieldId='username', fieldName='username', fieldLabel='Username', fieldType='text', autocomplete='username', required=true, csrfToken=${_csrf.token}, hxGet='/api/validate/username', hxTrigger='change, keyup delay:500ms', hxTarget='#username-error')}">
+    </div>
+
+    <div
+      th:replace="~{common/ui/input-field :: input-field(fieldId='email', fieldName='email', fieldLabel='Email', fieldType='email', autocomplete='email', required=true, csrfToken=${_csrf.token}, hxGet='/api/validate/email', hxTrigger='change, keyup delay:500ms', hxTarget='#email-error')}">
+    </div>
+
+    <!-- Email Verification Code Section -->
+    <div class="verification-code-section">
+      <div class="flex gap-2 items-end">
+        <div class="flex-1">
+          <div
+            th:replace="~{common/ui/input-field :: input-field(fieldId='verificationCode', fieldName='verificationCode', fieldLabel='Email Verification Code', fieldType='text', autocomplete='off', required=true)}">
+          </div>
+        </div>
+        <button type="button" id="sendCodeBtn"
+          class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition-colors duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed h-10"
+          hx-post="/api/email/send-verification-code" hx-include="[name='email']" hx-trigger="click"
+          hx-target="#code-message" hx-indicator="#send-code-spinner"
+          th:hx-headers="|{'X-CSRF-TOKEN': '${_csrf.token}'}|" disabled>
+          <span id="send-code-text">Send Code</span>
+          <div id="send-code-spinner" class="htmx-indicator inline-block ml-2">
+            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white inline-block"></div>
+          </div>
+        </button>
+      </div>
+      <div id="code-message" class="text-sm mt-1"></div>
+    </div>
+
+    <div
+      th:replace="~{common/ui/input-field :: input-field(fieldId='firstName', fieldName='firstName', fieldLabel='First Name', fieldType='text', autocomplete='given-name', required=true)}">
+    </div>
+
+    <div
+      th:replace="~{common/ui/input-field :: input-field(fieldId='lastName', fieldName='lastName', fieldLabel='Last Name', fieldType='text', autocomplete='family-name', required=true)}">
+    </div>
+
+    <div
+      th:replace="~{common/ui/input-field :: input-field(fieldId='password', fieldName='password', fieldLabel='Password', fieldType='password', autocomplete='new-password', required=true)}">
+    </div>
+
+    <div
+      th:replace="~{common/ui/input-field :: input-field(fieldId='confirmPassword', fieldName='confirmPassword', fieldLabel='Confirm Password', fieldType='password', autocomplete='new-password', required=true)}">
+    </div>
+
+    <div th:if="${#fields.hasErrors('passwordConfirmed')}" class="error">
+      <span th:errors="*{passwordConfirmed}"></span>
+    </div>
+
+    <div th:if="${#fields.hasGlobalErrors()}" class="error">
+      <span th:each="error : ${#fields.globalErrors()}" th:text="${error.defaultMessage}"></span>
+    </div>
+
+    <div th:if="${registerError}" class="error">
+      <p th:text="${registerError}"></p>
+    </div>
+
+    <div th:replace="~{common/ui/submit-button :: submit-button(buttonText='Register')}"></div>
+  </form>
+
+  <div
+    th:replace="~{common/ui/form/form-footer :: form-footer(footerText='Already have an account?', footerLinkText='Login here', footerLink=@{/login})}">
+  </div>
+
+</div>
+
+<script th:inline="javascript">
+  document.addEventListener('DOMContentLoaded', function () {
+    const emailInput = document.getElementById('email');
+    const sendCodeBtn = document.getElementById('sendCodeBtn');
+    const codeMessage = document.getElementById('code-message');
+    const sendCodeText = document.getElementById('send-code-text');
+
+    let emailValid = false;
+
+    // Monitor email input changes - reset button state
+    emailInput.addEventListener('input', function () {
+      emailValid = false;
+      sendCodeBtn.disabled = true;
+      codeMessage.textContent = '';
+      codeMessage.className = 'text-sm mt-1';
+      sendCodeText.textContent = 'Send Code';
+    });
+
+    // Listen for htmx validation response on email field
+    document.body.addEventListener('htmx:afterRequest', function (event) {
+      if (event.detail.pathInfo.requestPath.includes('/api/validate/email')) {
+        const emailError = document.getElementById('email-error');
+
+        // If no error message returned, email is valid (not existing)
+        if (!emailError.innerHTML.trim() || !emailError.innerHTML.includes('error')) {
+          emailValid = true;
+          sendCodeBtn.disabled = false;
+        } else {
+          // Email exists or is invalid - keep button disabled
+          emailValid = false;
+          sendCodeBtn.disabled = true;
+        }
+      }
+
+      // Handle send verification code response
+      if (event.detail.pathInfo.requestPath.includes('/api/email/send-verification-code')) {
+        if (event.detail.successful) {
+          sendCodeText.textContent = 'Resend Code';
+          sendCodeBtn.disabled = false;
+        } else {
+          sendCodeText.textContent = 'Send Code';
+          sendCodeBtn.disabled = emailValid ? false : true;
+        }
+      }
+    });
+
+    // Disable button during request
+    document.body.addEventListener('htmx:beforeRequest', function (event) {
+      if (event.detail.pathInfo.requestPath.includes('/api/email/send-verification-code')) {
+        sendCodeBtn.disabled = true;
+      }
+    });
+  });
+  /*]]>*/
+</script>
+
+</body>
+
+</html>

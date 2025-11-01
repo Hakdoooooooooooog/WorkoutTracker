@@ -20,6 +20,10 @@
       <p th:text="${loginError}"></p>
     </div>
 
+    <div class="text-right mb-4">
+      <a th:href="@{/forgot-password}" class="text-blue-600 hover:text-blue-800 text-sm">Forgot Password?</a>
+    </div>
+
     <div th:insert="~{common/ui/submit-button :: submit-button(buttonText='Login')}"></div>
   </form>
 

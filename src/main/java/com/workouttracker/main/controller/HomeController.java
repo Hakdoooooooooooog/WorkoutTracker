@@ -6,20 +6,35 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
+import java.util.List;
+import java.util.Map;
+
 @Controller
 @AllArgsConstructor
 public class HomeController {
 
     @GetMapping("/")
     public String getIndexPage(Model model) {
-        // TODO: Implement index page logic
+        // Populate navigation items for the header fragment
+        List<Map<String, String>> navItems = List.of(
+                Map.of("url", "/", "title", "Home"),
+                Map.of("url", "/dashboard", "title", "Dashboard"));
+
+        model.addAttribute("navItems", navItems);
+
         return "index"; // HTML TEMPLATE NAME
     }
 
     @GetMapping("/dashboard")
     public String getDashboardPage(Model model) {
-        // TODO: Implement dashboard logic
-        return "dashboard"; // HTML TEMPLATE NAME
+        // Populate navigation items for the header fragment
+        List<Map<String, String>> navItems = List.of(
+                Map.of("url", "/", "title", "Home"),
+                Map.of("url", "/dashboard", "title", "Dashboard"));
+
+        model.addAttribute("navItems", navItems);
+
+        return "features/Dashboard/dashboard"; // HTML TEMPLATE NAME
     }
 
 }

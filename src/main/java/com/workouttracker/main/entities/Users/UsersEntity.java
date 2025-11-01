@@ -66,6 +66,9 @@ public class UsersEntity {
     @Column(name = "permission", columnDefinition = "INT DEFAULT 1")
     private int permission;
 
+    @Column(name = "is_verified", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean isVerified;
+
     @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp createdAt;
 

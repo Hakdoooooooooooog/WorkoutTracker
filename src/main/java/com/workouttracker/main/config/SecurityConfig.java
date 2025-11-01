@@ -41,14 +41,16 @@ public class SecurityConfig {
         @Autowired
         private JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
-        private final List<String> publicUrls = List.of("/", "/login", "/register", "/logout", "/api/validate/**",
+        private final List<String> publicUrls = List.of("/", "/login", "/register", "/logout",
+                        "/forgot-password", "/reset-password",
+                        "/api/validate/**", "/api/email/**",
                         "/main.css", "/css/**", "/js/**", "/images/**");
 
         @Bean
         SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-                http.csrf(csrf -> csrf.ignoringRequestMatchers("/logout"));
-
-                http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+                http.csrf(csrf -> csrf
+                                .ignoringRequestMatchers("/logout")
+                                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(publicUrls.toArray(String[]::new))
                                                 .permitAll() // Allow home page, registration/login without

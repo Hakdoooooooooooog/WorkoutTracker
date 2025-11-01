@@ -38,7 +38,7 @@ public class UsersAuthController {
         }
 
         model.addAttribute("user", loginRequest);
-        return "/features/auth/login"; // HTML TEMPLATE NAME
+        return "/features/Authentication/login"; // HTML TEMPLATE NAME
     }
 
     @PostMapping("/login")
@@ -50,7 +50,7 @@ public class UsersAuthController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("pageTitle", "Login");
             model.addAttribute(BindingResult.MODEL_KEY_PREFIX + "user", bindingResult);
-            return "/features/auth/login"; // HTML TEMPLATE NAME
+            return "/features/Authentication/login"; // HTML TEMPLATE NAME
         }
 
         if (model.containsAttribute("logoutMessage")) {
@@ -62,12 +62,11 @@ public class UsersAuthController {
 
         if (token != null) {
             jwtFilter.setJwtCookie(response, token);
-
-            return "redirect:/"; // Redirect to home page
+            return "redirect:/"; // Redirect to home after successful login
         } else {
             model.addAttribute("pageTitle", "Login");
             model.addAttribute("loginError", "Invalid username or password");
-            return "/features/auth/login";
+            return "/features/Authentication/login";
         }
     }
 
@@ -75,7 +74,7 @@ public class UsersAuthController {
     public String getRegisterPage(Model model) {
         model.addAttribute("pageTitle", "Register");
         model.addAttribute("user", new RegisterRequest());
-        return "/features/auth/register";
+        return "/features/Authentication/register";
     }
 
     @PostMapping("/register")
@@ -87,7 +86,7 @@ public class UsersAuthController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("pageTitle", "Register");
             model.addAttribute(BindingResult.MODEL_KEY_PREFIX + "user", bindingResult);
-            return "/features/auth/register";
+            return "/features/Authentication/register";
         }
 
         // Attempt registration
@@ -96,6 +95,11 @@ public class UsersAuthController {
             redirectAttributes.addFlashAttribute("successMessage", "Registration successful! Please login.");
             redirectAttributes.addFlashAttribute("username", user.getUsername());
             return "redirect:/login";
+        } catch (IllegalArgumentException e) {
+            // Handle invalid verification code
+            model.addAttribute("pageTitle", "Register");
+            model.addAttribute("registerError", e.getMessage());
+            return "/features/Authentication/register";
         } catch (EntityExistsException e) {
             // Handle duplicate username/email as field errors
             if (e.getMessage().contains("Username")) {
@@ -105,11 +109,11 @@ public class UsersAuthController {
             }
             model.addAttribute("pageTitle", "Register");
             model.addAttribute(BindingResult.MODEL_KEY_PREFIX + "user", bindingResult);
-            return "/features/auth/register";
+            return "/features/Authentication/register";
         } catch (Exception e) {
             model.addAttribute("pageTitle", "Register");
             model.addAttribute("registerError", "Registration failed: " + e.getMessage());
-            return "/features/auth/register";
+            return "/features/Authentication/register";
         }
     }
 

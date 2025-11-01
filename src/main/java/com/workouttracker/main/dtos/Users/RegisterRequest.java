@@ -41,6 +41,9 @@ public class RegisterRequest {
     @NotBlank(message = "Please confirm your password")
     private String confirmPassword;
 
+    @NotBlank(message = "Verification code is required")
+    private String verificationCode;
+
     @AssertTrue(message = "Passwords do not match")
     public boolean isPasswordConfirmed() {
         return password != null && password.equals(confirmPassword);
