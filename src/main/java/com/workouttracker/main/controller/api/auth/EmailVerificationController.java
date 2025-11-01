@@ -21,6 +21,7 @@ public class EmailVerificationController {
 
     @PostMapping("/send-verification-code")
     public ResponseEntity<String> sendVerificationCode(@RequestParam(required = false) String email) {
+
         try {
             if (email == null || email.trim().isEmpty()) {
                 return ResponseEntity.badRequest().body("<span class='error'>Email is required</span>");

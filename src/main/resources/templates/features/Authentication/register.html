@@ -15,21 +15,21 @@
 
     <!-- Email Verification Code Section -->
     <div class="verification-code-section">
-      <div class="flex gap-2 items-end">
+      <div class="flex gap-2">
         <div class="flex-1">
           <div
             th:replace="~{common/ui/input-field :: input-field(fieldId='verificationCode', fieldName='verificationCode', fieldLabel='Email Verification Code', fieldType='text', autocomplete='off', required=true)}">
           </div>
         </div>
         <button type="button" id="sendCodeBtn"
-          class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition-colors duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed h-10"
+          class=" self-end bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition-colors duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed h-10"
           hx-post="/api/email/send-verification-code" hx-include="[name='email']" hx-trigger="click"
           hx-target="#code-message" hx-indicator="#send-code-spinner"
           th:hx-headers="|{'X-CSRF-TOKEN': '${_csrf.token}'}|" disabled>
           <span id="send-code-text">Send Code</span>
-          <div id="send-code-spinner" class="htmx-indicator inline-block ml-2">
+          <span id="send-code-spinner" class="htmx-indicator ml-2">
             <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white inline-block"></div>
-          </div>
+          </span>
         </button>
       </div>
       <div id="code-message" class="text-sm mt-1"></div>
