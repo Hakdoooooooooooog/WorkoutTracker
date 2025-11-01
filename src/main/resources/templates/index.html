@@ -8,22 +8,15 @@
   <link rel="stylesheet" th:href="@{/main.css}" />
 </head>
 
-<body>
-  <h1>Welcome to workout tracker!</h1>
-  <div sec:authorize="isAuthenticated()">
-    <p>Hello, <span sec:authentication="name"></span>!</p>
-  </div>
+<body class="min-h-screen flex flex-col">
+  <div th:replace="~{common/ui/header :: header(headerTitle='Welcome to Workout Tracker', navItems=${navItems})}"></div>
 
-  <div sec:authorize="!isAuthenticated()">
-    <a th:href="@{/login}">Login</a>
-    <a th:href="@{/register}">Register</a>
-  </div>
-  <div sec:authorize="isAuthenticated()">
-    <form action="#" th:action="@{/logout}" method="post">
-      <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
-      <button type="submit">Logout</button>
-    </form>
-  </div>
+  <main class="flex-1 py-8 px-4">
+    <h2>Track Your Workouts</h2>
+    <p>Use this application to log and track your workouts over time.</p>
+  </main>
+
+  <div th:replace="~{common/ui/footer :: footer(footerText='© 2023 Workout Tracker')}"></div>
 </body>
 
 </html>

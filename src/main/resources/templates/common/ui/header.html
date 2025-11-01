@@ -1,0 +1,32 @@
+<header class="w-full flex items-center justify-between p-4 h-[75px] border-b-2 border-amber-200"
+    th:fragment="header(headerTitle, navItems)">
+    <div class="w-full max-w-1/4">
+        <h1 th:text="${headerTitle != null ? headerTitle : 'Default Title'}"></h1>
+    </div>
+    <nav class="flex w-full max-w-3/4">
+        <ul class="flex w-full gap-4 items-center justify-end">
+
+            <li sec:authorize="isAuthenticated()" th:each="item : ${navItems}">
+
+                <a th:href="@{${item.url}}" th:text="${item.title}"></a>
+            </li>
+
+
+            <li sec:authorize="!isAuthenticated()">
+                <a th:href="@{/login}">Login</a>
+            </li>
+            <li sec:authorize="!isAuthenticated()">
+                <a th:href="@{/register}">Register</a>
+            </li>
+        </ul>
+
+
+        <div class="max-w-fit text-center" sec:authorize="isAuthenticated()">
+            <p>Hello, <span sec:authentication="name"></span>!</p>
+            <form action="#" th:action="@{/logout}" method="post">
+                <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+                <button type="submit">Logout</button>
+            </form>
+        </div>
+    </nav>
+</header>
